@@ -1,0 +1,83 @@
+brand: infineon
+product pattern id:
+ - 1EDCxxI12AH
+ - 1EDCxxH12AH
+datasheet url: https://www.infineon.com/dgdl/Infineon-1EDCxxI12AH-DataSheet-v02_00-EN.pdf?fileId=5546d4625d5945ed015d88ad8a38235e
+title: EiceDRIVER 1EDC Compact
+subtitle: Single channel IGBT gate driver IC in wide body package
+features:
+ - Single channel isolated IGBT driver
+ - For 600 V/650 V/1200 V IGBTs, MOSFETs and SiC MOSFETs
+ - Up to 10 A typical peak current at rail-to-rail outputs
+ - Separate source and sink outputs
+ - Galvanically isolated coreless transformer driver
+ - Wide input voltage operating range
+ - Suitable for operation at high ambient temperature
+ - Recognized under UL 1577 with an insulation test voltage of VISO = 3000 V for 1 s
+applications:
+ - AC and brushless DC motor drives
+ - High voltage DC/DC-converter and DC/AC-inverter
+ - Induction heating resonant application
+ - UPS-systems, welding and solar
+package: PG-DSO-8-59
+product features:
+  1EDC05I12AH:
+    output current configuration: ±0.5 A
+  1EDC20H12AH:
+    output current configuration: ±2.0 A
+  1EDC20I12AH:
+    output current configuration: ±2.0 A
+  1EDC40I12AH:
+    output current configuration: ±4.0 A
+  1EDC60H12AH:
+    output current configuration: ±6.0 A
+  1EDC60I12AH:
+    output current configuration: ±6.0 A
+description:
+  The 1EDCxxI12AH and 1EDCxxH12AH are galvanically isolated single channel IGBT driver in a
+  PG-DSO-8-59 package that provide output currents up to 10 A at separated output pins.
+
+  The input logic pins operate on a wide input voltage range from 3 V to 15 V using scaled CMOS
+  threshold levels to support even 3.3 V microcontrollers.
+
+  Data transfer across the isolation barrier is realized by the coreless transformer technology.
+
+  Every driver family member comes with logic input and driver output undervoltage lockout (UVLO)
+  and active shutdown.
+pins:
+  1 :
+    name: VCC1
+    function: Positive logic supply
+  2:
+    name: IN+
+    function: Non-inverted driver input (active high)
+  3:
+    name: IN-
+    function: Inverted driver input (active low)
+  4:
+    name: GND1
+    function: Logic ground
+  5:
+    name: GND2
+    function: Power ground
+  6:
+    name: VCC2
+    function: Positive power supply output side
+  7:
+    name: OUT+
+    function: Driver source output
+  8:
+    name: OUT-
+    function: Driver sink output
+implementation:
+  - bypass VCC1 to GND1 with 100n capacitor
+  - bypass positive +15V VCC2 to IGBT Emitter with 1u capacitor
+  - bypass negative  -8V GND2 to IGBT Emitter with 1u capacitor
+  - use a 10R for source resistor (OUT+ to Gate)
+  - use a 3R3 for sink resistor (OUT- to Gate)
+pcb implementation:
+ - Sufficient spacing should be kept between high voltage isolated side and low voltage side circuits.
+ - The same minimum distance between two adjacent high-side isolated parts of the PCB should be
+   maintained to increase the effective isolation and to reduce parasitic coupling.
+ - In order to ensure low supply ripple and clean switching signals, bypass capacitor trace lengths
+   should be kept as short as possible.

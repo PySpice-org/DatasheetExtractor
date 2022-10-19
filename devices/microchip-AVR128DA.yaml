@@ -1,0 +1,265 @@
+brand: microchip
+product pattern id:
+ - AVR128DA28/32/48/64
+product family: AVR DA
+datasheet url: https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf
+
+description:
+  The AVR128DA28/32/48/64 microcontrollers of the AVR DA family are using the AVR CPU with hardware
+  multiplier, running at up to 24 MHz, with 128 KB of Flash, 16 KB of SRAM, and 512B of EEPROM in
+  28-, 32-, 48- or 64-pin packages. The AVR DA family uses the latest technologies from Microchip
+  Technology, with a flexible and low-power architecture including Event System, intelligent analog
+  features, advanced digital peripherals and Peripheral Touch Controller (PTC).
+
+device designation:
+  pattern: AVR<flash_size><family><pin_count><carrier_type> - <temperature_range>/<package_style>
+  example: AVR128DA64T - E/MR
+  description:
+    flash_size: flash size in KB
+    family: family
+    pin_count: pin count
+    carrier_type: carrier type
+    package_style: package style
+    temperature_range : temperature range
+  values:
+    flash_size: 128
+    pin_count:
+      - 28
+      - 32
+      - 48
+      - 64
+    package_style:
+      MR  : VQFN64
+      6LX : VQFN48
+      RXB : VQFN32
+      PT  : TQFP
+      SS  : SSOP
+      SO  : SOIC
+      SP  : SPDIP
+    temperature_range:
+      I : -40°C to +85°C (Industrial)
+      E : -40°C to +125°C (Extended)
+    carrier_type:
+      ∅ :
+        - tube
+        - tray
+      T :
+        - tape
+        - reel
+
+memory:
+  AVR32DA28 | AVR32DA32 | AVR32DA48:
+    flash memory : 32 KB
+    sram : 4 KB
+    eeprom : 512B
+    user row : 32B
+
+  AVR64DA28 | AVR64DA32 | AVR64DA48 | AVR64DA64:
+    flash memory : 64 KB
+    sram : 8 KB
+    eeprom : 512B
+    user row : 32B
+
+  AVR128DA28 | AVR128DA32 | AVR128DA48 | AVR128DA64:
+    flash memory : 128 KB
+    sram : 16 KB
+    eeprom : 512B
+    user row : 32B
+
+peripheral:
+  AVR128DA28 | AVR64DA28 | AVR32DA28:
+    pins : 28
+    max. frequency (mhz) : 24
+    16-bit timer/counter type a (tca) : 1
+    16-bit timer/counter type b (tcb) : 3
+    12-bit timer/counter type d (tcd) : 1
+    real-time counter (rtc) : 1
+    usart : 3
+    spi : 2
+    twi/i2c : 1
+    12-bit differential adc (channels) : 1 (10)
+    10-bit dac (outputs) : 1
+    analog comparator (ac) : 3
+    zero-cross detectors (zcd) : 1
+    peripheral touch controller (ptc) (self-cap/mutual cap channels) : 1 (18/81)
+    configurable custom logic (ccl) : 1 (4)
+    watchdog timer (wdt) : 1
+    event system channels : 8
+    general purpose i/o : 23
+    port : PA[7:0], PC[3:0], PD[7:0], PF[6,1,0]
+    external interrupts : 23
+    crcscan : 1
+    unified program and debug interface (updi) : 1
+
+  AVR128DA32 | AVR64DA32 | AVR32DA32:
+    pins : 32
+    max. frequency (mhz) : 24
+    16-bit timer/counter type a (tca) : 1
+    16-bit timer/counter type b (tcb) : 3
+    12-bit timer/counter type d (tcd) : 1
+    real-time counter (rtc) : 1
+    usart : 3
+    spi : 2
+    twi/i2c : 2
+    12-bit differential adc (channels) : 1 (14)
+    10-bit dac (outputs) : 1
+    analog comparator (ac) : 3
+    zero-cross detectors (zcd) : 1
+    peripheral touch controller (ptc) (self-cap/mutual cap channels) : 1 (22/121)
+    configurable custom logic (ccl) : 1 (4)
+    watchdog timer (wdt) : 1
+    event system channels : 8
+    general purpose i/o : 27
+    port : PA[7:0], PC[3:0], PD[7:0],PF[6:0]
+    external interrupts : 27
+    crcscan : 1
+    unified program and debug interface (updi) : 1
+
+  AVR128DA48 | AVR64DA48 | AVR32DA48:
+    pins : 48
+    max. frequency (mhz) : 24
+    16-bit timer/counter type a (tca) : 2
+    16-bit timer/counter type b (tcb) : 4
+    12-bit timer/counter type d (tcd) : 1
+    real-time counter (rtc) : 1
+    usart : 5
+    spi : 2
+    twi/i2c : 2
+    12-bit differential adc (channels) : 1 (18)
+    10-bit dac (outputs) : 1
+    analog comparator (ac) : 3
+    zero-cross detectors (zcd) : 2
+    peripheral touch controller (ptc) (self-cap/mutual cap channels) : 1 (32/256)
+    configurable custom logic (ccl) : 1 (6)
+    watchdog timer (wdt) : 1
+    event system channels : 10
+    general purpose i/o : 41
+    port : PA[7:0], PB[5:0], PC[7:0], PD[7:0], PE[3:0], PF[6:0]
+    external interrupts : 41
+    crcscan : 1
+    unified program and debug interface (updi) : 1
+
+  AVR128DA64 | AVR64DA64:
+    pins : 64
+    max. frequency (mhz) : 24
+    16-bit timer/counter type a (tca) : 2
+    16-bit timer/counter type b (tcb) : 5
+    12-bit timer/counter type d (tcd) : 1
+    real-time counter (rtc) : 1
+    usart : 6
+    spi : 2
+    twi/i2c : 2
+    12-bit differential adc (channels) : 1 (22)
+    10-bit dac (outputs) : 1
+    analog comparator (ac) : 3
+    zero-cross detectors (zcd) : 3
+    peripheral touch controller (ptc) (self-cap/mutual cap channels) : 1 (46/529)
+    configurable custom logic (ccl) : 1 (6)
+    watchdog timer (wdt) : 1
+    event system channels : 10
+    general purpose i/o : 55
+    port : PA[7:0], PB[7:0], PC[7:0], PD[7:0], PE[7:0], PF[6:0], PG[7:0]
+    external interrupts : 55
+    crcscan : 1
+    unified program and debug interface (updi) : 1
+
+features:
+  AVR CPU:
+   - Running at up to 24 MHz
+   - Single-cycle I/O access
+   - Two-level interrupt controller
+   - Two-cycle hardware multiplier
+   - Supply voltage range: 1.8V to 5.5V
+  Memories:
+   - 128 KB In-System self-programmable Flash memory
+   - 512B EEPROM
+   - 16 KB SRAM
+   - 32B of user row in nonvolatile memory that can keep data during chip-erase and be programmed while thedevice is locked
+   - Write/erase endurance
+     - Flash 10,000 cycles
+     - EEPROM 100,000 cycles
+   - Data retention: 40 years at 55°C
+  System:
+    - Power-on Reset (POR) circuit
+    - Brown-out Detector (BOD)
+    - Clock options
+      - High-Precision internal high-frequency Oscillator with selectable frequency up to 24 MHz (OSCHF)
+        - Auto-tuning for improved internal oscillator accuracy
+     - Internal PLL up to 48 MHz for high-frequency operation of Timer/Counter type D (PLL)
+     - 32.768 kHz Ultra-Low Power internal oscillator (OSC32K)
+     - 32.768 kHz external crystal oscillator (XOSC32K)
+     - External clock input
+    - Single-pin Unified Program and Debug Interface (UPDI)
+    - Three sleep modes
+      - Idle with all peripherals running for immediate wake-up
+      - Standby with a configurable operation of selected peripherals
+      - Power-Down with full data retention
+  Peripherals:
+   - Up to two 16-bit Timer/Counter type A (TCA) with a dedicated period register and three PWM channels
+   - Up to five 16-bit Timer/Counter type B (TCB) with input capture and simple PWM functionality
+   - One 12-bit Timer/Counter type D (TCD) optimized for power control
+   - One 16-bit Real-Time Counter (RTC) running from an external crystal or internal oscillator
+   - Up to six USART with fractional baud rate generator, auto-baud, and start-of-frame detection
+   - Two host/client Serial Peripheral Interface (SPI)
+   - Up to two Two-Wire Interface (TWI) with dual address match
+     - Independent host and client operation (Dual mode)
+     - Philips I2C compatible
+     - Standard mode (Sm, 100 kHz)
+     - Fast mode (Fm, 400 kHz)
+     - Fast mode plus (Fm+, 1 MHz) (1)
+   - Event System for CPU independent and predictable inter-peripheral signaling
+   - Configurable Custom Logic (CCL) with up to six programmable Look-up Tables (LUT)
+   - One 12-bit differential 130 ksps Analog-to-Digital Converter (ADC)
+   - Three Analog Comparators (ACs) with window compare functions
+   - One 10-bit Digital-to-Analog Converter (DAC)
+   - Up to three Zero-Cross Detectors (ZCD)
+   - Multiple voltage references (VREF)
+     - 1.024V
+     - 2.048V
+     - 2.500V
+     - 4.096V
+   - Peripheral Touch Controller (PTC) with Driven Shield+ and Boost Mode technologies for capacitive touchbuttons, sliders, wheels and 2D surface
+     - Up to 46 self-capacitance and 529 mutual capacitance channels
+   - Automated Cyclic Redundancy Check (CRC) Flash memory scan
+   - Watchdog Timer (WDT) with Window mode, with a separate on-chip oscillator
+   - External interrupt on all general purpose pins
+  I/O and Packages:
+   - Up to 55 programmable I/O pins
+   - 28-pin SPDIP, SSOP and SOIC
+   - 32-pin VQFN 5x5 mm and TQFP 7x7 mm
+   - 48-pin VQFN 6x6 mm and TQFP 7x7 mm
+   - 64-pin VQFN 9x9 mm and TQFP 10x10 mm
+  Temperature Ranges:
+    Industrial: -40°C to +85°C
+    Extended: -40°C to +125°C
+
+pinout:
+  package: 28-pin
+    1: PA7
+    2: PC0
+    3: PC1
+    4: PC2
+    5: PC3
+    6: PD0
+    7: PD1
+    8: PD2
+    9: PD3
+    10: PD4
+    11: PD5
+    12: PD6
+    13: PD7
+    14: AVDD
+    15: GND
+    16: PF0 (XTAL32K1)
+    17: PF1 (XTAL32K2)
+    18: PF6 (RESET)
+    19: UPDI
+    20: VDD
+    21: GND
+    22: PA0 (EXTCLK)
+    23: PA1
+    24: PA2
+    25: PA3
+    26: PA4
+    27: PA5
+    28: PA6
