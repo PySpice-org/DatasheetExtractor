@@ -1,0 +1,7 @@
+IntervalArithmetic
+PyYAML
+Rtree
+pymupdf
+requests
+Pillow
+numpy
