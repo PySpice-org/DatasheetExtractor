@@ -1,19 +1,28 @@
 ####################################################################################################
 
+from DatasheetExtractor import setup_logging
+setup_logging()
+
+import logging
+logging.info('Start ...')
+
+####################################################################################################
+
 from pprint import pprint
 
 import os
 
-from DatasheetExtractor import DatasheetExtractor, Page
+from DatasheetExtractor import Document, Page
 
 ####################################################################################################
 
 url = 'https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf'
 
-document = DatasheetExtractor(url, cache_path='.')
+document = Document(url, cache_path='devices')
 # document.download()
 
 document._load()
+1 / 0
 
 ####################################################################################################
 
