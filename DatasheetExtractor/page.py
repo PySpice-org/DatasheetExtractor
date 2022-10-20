@@ -30,20 +30,20 @@ from typing import Iterator
 
 from enum import Enum, auto
 import logging
+import io
 import os
 
 # https://github.com/pymupdf/PyMuPDF
 # import fitz
+
+import numpy as np
+from PIL import Image
 
 from IntervalArithmetic import IntervalInt2D
 
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
-
-####################################################################################################
-
-UNIT_SCALE = 10
 
 ####################################################################################################
 
@@ -54,12 +54,6 @@ class Direction(Enum):
 ####################################################################################################
 
 class Line:
-
-    ##############################################
-
-    @classmethod
-    def to_unit(cls, x: int) -> int:
-        return x * UNIT_SCALE
 
     ##############################################
 
@@ -145,16 +139,31 @@ class Line:
 
 class Page:
 
+    ###! to transform float X.12... to int X1
+    UNIT_SCALE = 10
+
     ##############################################
 
-    def __init__(self, number: int, data: dict) -> None:
+    @classmethod
+    def to_scaled(cls, x: float) -> int:
+        return int(x * cls.UNIT_SCALE)
+
+    @classmethod
+    def from_scaled(cls, x: int) -> float:
+        return x / cls.UNIT_SCALE
+
+    ##############################################
+
+    def __init__(self, document: 'Document', number: int, fitz_page) -> None:
+        self._document = document
         self._number = number
-        self._data = data
+        self._fitz_page = fitz_page
+        self._data = fitz_page.get_text('dict')
 
     ##############################################
 
     @property
-    def number(self):
+    def number(self) -> int:
         return self._number
 
     ##############################################
@@ -166,11 +175,32 @@ class Page:
 
     @property
     def width(self):
-        return self._data['width'] * UNIT_SCALE
+        return self.to_scaled(self._data['width'])
 
     @property
     def height(self):
-        return self._data['height'] * UNIT_SCALE
+        return self.to_scaled(self._data['height'])
+
+    ##############################################
+
+    def pixmap(self):
+        # Pixmap has the dimension of the page with width and height rounded to integers and a default resolution of 72 dpi.
+        #   210 mm / 25.4 * 72 = 595.27 px
+        # so at 72 dpi pixmap coordinate are equivalent to page coordinate / UNIT_SCALE
+        # https://pymupdf.readthedocs.io/en/latest/page.html#Page.get_pixmap
+        # https://pymupdf.readthedocs.io/en/latest/pixmap.html#pixmap
+        pix = self._fitz_page.get_pixmap(
+            # matrix=,
+            dpi=72,
+            # colorspace=,
+            # clip=,
+            alpha=False,
+            annots=False,
+        )
+        stream = pix.pil_tobytes(format='PNG')
+        image = Image.open(io.BytesIO(stream))
+        array = np.array(image)
+        return array
 
     ##############################################
 
@@ -189,16 +219,16 @@ class Page:
                             direction = Direction.vertical
                     for s, span in enumerate(line['spans']):
                         # pprint(span)
-                        x, y = [int(_*UNIT_SCALE) for _ in span['origin']]
-                        bbox = [int(_*UNIT_SCALE) for _ in span['bbox']]
-                        size = int(span['size']*UNIT_SCALE)
+                        x, y = [self.to_scaled(_) for _ in span['origin']]
+                        bbox = [self.to_scaled(_) for _ in span['bbox']]
+                        size = self.to_scaled(span['size'])
                         location = f'{b}/{l}/{s}'
                         yield Line(x, y, bbox, direction, size, span['text'], location)
 
     ##############################################
 
     def filter_lines(self, size=None) -> Iterator[Line]:
-        size *= UNIT_SCALE
+        size = self.to_scaled(size)
         for line in self.lines:
             if size is not None and line.size == size:
                 yield line

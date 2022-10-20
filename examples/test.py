@@ -22,7 +22,13 @@ document = Document(url, cache_path='devices')
 # document.download()
 
 document._load()
-1 / 0
+
+####################################################################################################
+
+# page = document[18]
+# array = page.pixmap()
+# print(page.width, page.height)
+# print(array.shape)
 
 ####################################################################################################
 
@@ -123,7 +129,7 @@ def process_multiplexing_table(page_number):
             if line.siblings:
                 sep = ' // '
                 text += sep + sep.join([_.text for _ in line.siblings])
-            if not pin and abs(line.center_x - line.to_unit(126)) < line.to_unit(4.5):
+            if not pin and abs(line.center_x - Page.to_scaled(126)) < Page.to_scaled(4.5):
                 pin_name = text
                 pin = True
             elif not pin:

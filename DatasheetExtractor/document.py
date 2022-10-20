@@ -115,10 +115,6 @@ class Document:
     def _load_page(self, page_number: int) -> Page:
         doc = self._load()
         fitz_page = doc[page_number -1]
-        text = fitz_page.get_text('json')
-        # print(text)
-        data = fitz_page.get_text('dict')
-        page = Page(number=page_number, data=data)
-        return page
+        return Page(self, page_number, fitz_page)
 
     __getitem__ = _load_page
