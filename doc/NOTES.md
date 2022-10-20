@@ -7,3 +7,12 @@
 
 * https://gitlab.com/kicad/libraries
 * https://gitlab.com/kicad/libraries/kicad-footprint-generator
+
+* https://github.com/tabulapdf/tabula Tabula is a tool for liberating data tables trapped inside PDF files 
+* https://github.com/tabulapdf/tabula-java Extract tables from PDF files
+
+* https://github.com/tabulapdf/tabula-java/blob/master/src/main/java/technology/tabula/extractors/SpreadsheetExtractionAlgorithm.java
+
+https://trepo.tuni.fi/bitstream/handle/123456789/21520/Nurminen.pdf?sequence=3&isAllowed=y
+ANSSI NURMINEN ALGORITHMIC EXTRACTION OF DATA IN TABLES IN PDF DOCUMENTS
+Master's Thesis
