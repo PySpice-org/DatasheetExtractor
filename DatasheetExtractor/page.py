@@ -31,7 +31,6 @@ from typing import Iterator
 from enum import Enum, auto
 import logging
 import io
-import os
 
 # https://github.com/pymupdf/PyMuPDF
 # import fitz
@@ -227,7 +226,7 @@ class Page:
 
     ##############################################
 
-    def filter_lines(self, size=None) -> Iterator[Line]:
+    def filter_lines(self, size: float = None) -> Iterator[Line]:
         size = self.to_scaled(size)
         for line in self.lines:
             if size is not None and line.size == size:
@@ -235,7 +234,14 @@ class Page:
 
     ##############################################
 
-    def _sort_xy(self, axe: str = 'x', use_center1=False, use_center2=False, ensure_direction=False, round_scale=10) -> dict:
+    def sort_xy(
+            self,
+            axe: str = 'x',
+            use_center1: bool = False,
+            use_center2: bool = False,
+            ensure_direction: bool = False,
+            round_scale: int = 10,
+    ) -> dict:
         # Create an axe map
         axe_map = {}
         for line in self.lines:
@@ -249,7 +255,7 @@ class Page:
             else:
                 x = line.y if axe == 'y' else line.x
             x = int(x / round_scale)
-            #! alist = axe_map.setdefault(x, [])
+            axe_map.setdefault(x, [])
             axe_map[x].append(line)
         # sort on second axe
         for line in axe_map.values():
@@ -260,45 +266,3 @@ class Page:
                     return _.x if axe == 'y' else _.y
             line.sort(key=func)
         return axe_map
-
-    ##############################################
-
-    def extract_pinout(self, axe: str = 'y') -> dict:
-        ys = self._sort_xy(axe, ensure_direction=True, round_scale=10)
-        # pprint(ys)
-
-        pins = {}
-        for y in ys.values():
-            if len(y) == 4:
-                parts = [_.text for _ in y]
-                int_count = 0
-                for i, value in enumerate(parts):
-                    try:
-                        parts[i] = int(value)
-                        int_count += 1
-                    except ValueError:
-                        pass
-                if int_count == 2:
-                    pin_l, l, r, pin_r = parts
-                    pins[l] = pin_l
-                    pins[r] = pin_r
-        return pins
-
-    ##############################################
-
-    def extract_pinout_quad(self) -> dict:
-        h_pins = self.extract_pinout(axe='y')
-        v_pins = self.extract_pinout(axe='x')
-        if v_pins and len(h_pins) != len(v_pins):
-            raise NameError("H vs V number of pins mismatch")
-        h_pins.update(v_pins)
-        return h_pins
-
-    ##############################################
-
-    @staticmethod
-    def format_pinout(pins) -> str:
-        text = ''
-        for key in sorted(pins.keys()):
-            text += f' {key}: {pins[key]}' + os.linesep
-        return text

@@ -13,6 +13,7 @@ from pprint import pprint
 import os
 
 from DatasheetExtractor import Document, Page
+from DatasheetExtractor.Extractor import PinoutExtractor
 
 ####################################################################################################
 
@@ -33,22 +34,23 @@ document._load()
 ####################################################################################################
 
 # for page in range(14, 17 +1):
+#     extractor = PinoutExtractor(document[page])
 #     print()
 #     print(f'Page {page}')
-#     print(Page.format_pinout(document[page].extract_pinout_quad()))
+#     print(extractor.format_pinout(extractor.extract_pinout_quad()))
 
 ####################################################################################################
 
 # page = document[2]
 # page_width = page.width
 
-# for y in page._sort_xy(axe='x', use_center1=False, use_center2=False, round_scale=200).values():
+# for y in page.sort_xy(axe='x', use_center1=False, use_center2=False, round_scale=200).values():
 #     print('---')
 #     for line in y:
 #         # print(line)
 #         print(line.text)
 
-# for y in page._sort_xy(axe='y', use_center=True, round_scale=page_width/10).values():
+# for y in page.sort_xy(axe='y', use_center=True, round_scale=page_width/10).values():
 #     print('---')
 #     for line in y:
 #         # print(line)
@@ -59,7 +61,7 @@ document._load()
 # page = document[4]
 # # for line in page.lines:
 # #     print(line)
-# for y in page._sort_xy(axe='y', use_center1=True, use_center2=False, round_scale=100).values():
+# for y in page.sort_xy(axe='y', use_center1=True, use_center2=False, round_scale=100).values():
 #     text = ''.join(_.text for _ in y)
 #     span0 = y[0]
 #     print(int(span0.x / span0.size), text)
