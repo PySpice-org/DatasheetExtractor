@@ -658,7 +658,7 @@ _misplaced_members = {
         #     'QtCompat.qInstallMessageHandler', _qInstallMessageHandler
         # ],
     },
-    'PyQt5': {
+    'PyQt6': {
         'QtCore.pyqtProperty': 'QtCore.Property',
         'QtCore.pyqtSignal': 'QtCore.Signal',
         'QtCore.pyqtSlot': 'QtCore.Slot',
@@ -722,7 +722,7 @@ _compatibility_members = {
         #     'getSaveFileName': 'QtWidgets.QFileDialog.getSaveFileName',
         # },
     },
-    'PyQt5': {
+    'PyQt6': {
         # 'QWidget': {
         #     'grab': 'QtWidgets.QWidget.grab',
         # },

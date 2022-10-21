@@ -33,9 +33,9 @@ import traceback
 
 ####################################################################################################
 
-from PyQt5.QtCore import QRunnable
-from PyQt5.QtQml import QQmlListProperty
-from QtShim.QtCore import (
+from qtpy.QtCore import QRunnable
+from qtpy.QtQml import QQmlListProperty
+from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     Qt, QTimer, QUrl
 )

@@ -34,7 +34,7 @@ def _wrapinstance(ptr, base=None):
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
-    if Qt.IsPyQt4 or Qt.IsPyQt5:
+    if Qt.IsPyQt4 or Qt.IsPyQt6:
         func = getattr(Qt, '_sip').wrapinstance
     elif Qt.IsPySide2:
         func = getattr(Qt, '_shiboken2').wrapInstance
@@ -64,7 +64,7 @@ def _wrapinstance(ptr, base=None):
 
 def _translate(context, sourceText, *args):
     # In Qt4 bindings, translate can be passed 2 or 3 arguments
-    # In Qt5 bindings, translate can be passed 2 arguments
+    # In Qt6 bindings, translate can be passed 2 arguments
     # The first argument is disambiguation[str]
     # The last argument is n[int]
     # The middle argument can be encoding[QtCore.QCoreApplication.Encoding]
@@ -85,7 +85,7 @@ def _translate(context, sourceText, *args):
                 binding=Qt.__binding__,
             )
         )
-    if Qt.__binding__ in ('PySide2', 'PyQt5'):
+    if Qt.__binding__ in ('PySide2', 'PyQt6'):
         sanitized_args = [context, sourceText, disambiguation, n]
     else:
         sanitized_args = [

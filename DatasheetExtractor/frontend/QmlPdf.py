@@ -34,11 +34,11 @@ import subprocess
 import time
 import uuid
 
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtQuick import QQuickImageProvider
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtQml import QQmlListProperty
-from QtShim.QtCore import (
+from qtpy.QtGui import QPixmap
+from qtpy.QtQuick import QQuickImageProvider
+from qtpy.QtCore import QCoreApplication
+from qtpy.QtQml import QQmlListProperty
+from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     Qt, QTimer, QUrl
 )

@@ -34,9 +34,9 @@ __all__ = [
 import logging
 
 # Fixme:
-from PyQt5.QtCore import QSettings
-from PyQt5.QtQml import QQmlListProperty
-from QtShim.QtCore import (
+from qtpy.QtCore import QSettings
+from qtpy.QtQml import QQmlListProperty
+from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     # QUrl,
 )

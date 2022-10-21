@@ -1,7 +1,10 @@
 IntervalArithmetic
+Pillow
 PyYAML
+Pyside6
+Qtpy
 Rtree
+numpy
 pymupdf
 requests
-Pillow
-numpy
+tabula-py

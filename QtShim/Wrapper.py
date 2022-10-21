@@ -8,7 +8,7 @@ def _qInstallMessageHandler(handler):
     '''
 
     def messageOutputHandler(*args):
-        # In Qt5 bindings, message handlers are passed 3 arguments
+        # In Qt6 bindings, message handlers are passed 3 arguments
         # The first argument is a QtMsgType
         # The last argument is the message to be printed
         # The Middle argument (if passed) is a QMessageLogContext

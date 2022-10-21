@@ -48,11 +48,11 @@
 
 import logging
 
-from PyQt5.QtCore import QMetaEnum
-from PyQt5.QtGui import QKeyEvent, QKeySequence
-from PyQt5.QtQuick import QQuickItem
+from qtpy.QtCore import QMetaEnum
+from qtpy.QtGui import QKeyEvent, QKeySequence
+from qtpy.QtQuick import QQuickItem
 
-from QtShim.QtCore import (
+from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     Qt,
 )
@@ -71,7 +71,7 @@ class KeyHelper(QObject):
 _key_helper = KeyHelper()
 
 def _key_name(index):
-    # return _key_helper.key_name(index) # Fixme: PyQt5 issue
+    # return _key_helper.key_name(index) # Fixme: qtpy issue
     return index
 
 ####################################################################################################

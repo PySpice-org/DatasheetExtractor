@@ -37,20 +37,18 @@ import logging
 import sys
 import traceback
 
-# Fixme:
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QApplication
-
-from QtShim.QtCore import (
+# We use https://github.com/spyder-ide/qtpy Qt shim
+from qtpy import QtCore
+from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     Qt, QTimer, QUrl
 )
-from QtShim.QtGui import QGuiApplication, QIcon
-from QtShim.QtQml import qmlRegisterType, QQmlApplicationEngine
-# Fixme: PYSIDE-574 qmlRegisterSingletonType and qmlRegisterUncreatableType missing in QtQml
-from QtShim.QtQml import qmlRegisterUncreatableType
-from QtShim.QtQuick import QQuickPaintedItem, QQuickView
-# from QtShim.QtQuickControls2 import QQuickStyle
+from qtpy.QtGui import QGuiApplication, QIcon
+from qtpy.QtQml import qmlRegisterType, QQmlApplicationEngine
+from qtpy.QtQml import qmlRegisterUncreatableType
+from qtpy.QtQuick import QQuickPaintedItem, QQuickView
+# from qtpy.QtQuickControls2 import QQuickStyle
+from qtpy.QtWidgets import QApplication
 
 # from DatasheetExtractor.Pdf import PdfLibrary
 from DatasheetExtractor.Common.ArgparseAction import PathAction
@@ -253,14 +251,14 @@ class Application(QObject):
     ##############################################
 
     def _message_handler(self, msg_type, context, msg):
-
-        if msg_type == QtCore.QtDebugMsg:
+        QtMsgType = QtCore.QtMsgType
+        if msg_type == QtMsgType.QtDebugMsg:
             method = self._logger.debug
-        elif msg_type == QtCore.QtInfoMsg:
+        elif msg_type == QtMsgType.QtInfoMsg:
             method = self._logger.info
-        elif msg_type == QtCore.QtWarningMsg:
+        elif msg_type == QtMsgType.QtWarningMsg:
             method = self._logger.warning
-        elif msg_type in (QtCore.QtCriticalMsg, QtCore.QtFatalMsg):
+        elif msg_type in (QtMsgType.QtCriticalMsg, QtMsgType.QtFatalMsg):
             method = self._logger.critical
             # method = None
 
@@ -313,9 +311,10 @@ class Application(QObject):
         #         'qt.qpa.xcb.xcberror',
         # ):
         #     QtCore.QLoggingCategory.setFilterRules('{} = false'.format(path))
-        QGuiApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
         # QQuickStyle.setStyle('Material')
+
+        pass
 
     ##############################################
 
@@ -381,6 +380,9 @@ class Application(QObject):
 
     def _register_qml_types(self):
         qmlRegisterType(KeySequenceEditor, 'DatasheetExtractor', 1, 0, 'KeySequenceEditor')
+        # PyQt6 doesn't implement qmlRegisterType
+        # https://doc.qt.io/qtforpython/PySide6/QtQml/qmlRegisterUncreatableType.html
+        #   see also https://doc.qt.io/qtforpython/PySide6/QtQml/QmlUncreatable.html#qmluncreatable
         qmlRegisterUncreatableType(Shortcut, 'DatasheetExtractor', 1, 0, 'Shortcut', 'Cannot create Shortcut')
         qmlRegisterUncreatableType(ApplicationSettings, 'DatasheetExtractor', 1, 0, 'ApplicationSettings', 'Cannot create ApplicationSettings')
         qmlRegisterUncreatableType(QmlApplication, 'DatasheetExtractor', 1, 0, 'QmlApplication', 'Cannot create QmlApplication')

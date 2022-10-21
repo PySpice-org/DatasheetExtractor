@@ -1,4 +1,4 @@
-"""Minimal Python 3 shim around PyQt5 and Pyside2 Qt bindings for QML applications.
+"""Minimal Python 3 shim around PyQt6 and Pyside2 Qt bindings for QML applications.
 
 Forked from https://github.com/mottosso/Qt.py under MIT License.
 Copyright (c) 2016 Marcus Ottosson
@@ -45,7 +45,7 @@ if QT_PREFERRED_BINDING:
     QT_PREFERRED_BINDING = list(x for x in QT_PREFERRED_BINDING.split(',') if x)
 else:
     # on dec 2018, PySide2 is still not fully operational
-    QT_PREFERRED_BINDING = ('PyQt5', 'PySide2')
+    QT_PREFERRED_BINDING = ('PyQt6', 'PySide2')
 
 ####################################################################################################
 
@@ -70,7 +70,7 @@ def _log(text):
 def _import_sub_module(module, name):
     """import a submodule"""
     _log('_import_sub_module {} {}'.format(module, name))
-    module_name = module.__name__ + '.' + name # e.g. PyQt5.QtCore
+    module_name = module.__name__ + '.' + name # e.g. PyQt6.QtCore
     module = importlib.import_module(module_name)
     return module
 
@@ -284,9 +284,9 @@ def _pyside2():
 ####################################################################################################
 
 def _pyqt5():
-    """Initialise PyQt5"""
+    """Initialise PyQt6"""
 
-    import PyQt5 as module
+    import PyQt6 as module
     extras = []
     # try:
     #     import sip
@@ -308,8 +308,8 @@ def _pyqt5():
     #     Qt.QtCompat.setSectionResizeMode = \
     #         Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    _reassign_misplaced_members('PyQt5')
-    # _build_compatibility_members('PyQt5')
+    _reassign_misplaced_members('PyQt6')
+    # _build_compatibility_members('PyQt6')
 
 ####################################################################################################
 
@@ -320,7 +320,7 @@ def _install():
 
     available = {
         'PySide2': _pyside2,
-        'PyQt5': _pyqt5,
+        'PyQt6': _pyqt5,
     }
 
     _log("Order: {}".format(' '.join(order)))
@@ -386,4 +386,4 @@ _install()
 
 # Setup Binding Enum states
 Qt.IsPySide2 = Qt.__binding__ == 'PySide2'
-Qt.IsPyQt5 = not Qt.IsPySide2
+Qt.IsPyQt6 = not Qt.IsPySide2
