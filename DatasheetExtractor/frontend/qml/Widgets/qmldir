@@ -1,0 +1,15 @@
+module Widgets
+AboutDialog 1.0 AboutDialog.qml
+CentredDialog 1.0 CentredDialog.qml
+DialogImageViewer 1.0 ImageViewer.qml
+ErrorMessageDialog 1.0 ErrorMessageDialog.qml
+FileField 1.0 FileField.qml
+Grid 1.0 Grid.qml
+ImageViewer 1.0 ImageViewer.qml
+MarkdownViewer 1.0 MarkdownViewer.qml
+NativeFileDialog 1.0 NativeFileDialog.qml
+NativePdfFolderDialog 1.0 NativePdfFolderDialog.qml
+ShortcutRow 1.0 ShortcutRow.qml
+TextField 1.0 TextField.qml
+ToolButtonTip 1.0 ToolButtonTip.qml
+WarnedToolButton 1.0 WarnedToolButton.qml

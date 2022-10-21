@@ -1,0 +1,11 @@
+module Widgets
+Actions 1.0 Actions.qml
+FooterToolBar 1.0 FooterToolBar.qml
+HeaderToolBar 1.0 HeaderToolBar.qml
+ImageViewer 1.0 ImageViewer.qml
+MenuBar 1.0 MenuBar.qml
+MetadataPage 1.0 MetadataPage.qml
+OptionsDialog 1.0 OptionsDialog.qml
+PageViewer 1.0 PageViewer.qml
+PageViewerPage 1.0 PageViewerPage.qml
+PageViewerToolBar 1.0 PageViewerToolBar.qml
