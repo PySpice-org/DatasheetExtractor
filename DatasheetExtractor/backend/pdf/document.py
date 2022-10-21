@@ -20,13 +20,13 @@
 
 ####################################################################################################
 
-__all__ = ['Document']
+__all__ = ['PdfDocument']
 
 ####################################################################################################
 
 from pathlib import Path
 # from pprint import pprint
-# from typing import Iterator
+from typing import Iterator
 from urllib.parse import urlparse
 
 import logging
@@ -38,7 +38,7 @@ import fitz
 
 ####################################################################################################
 
-from .page import Page
+from .page import PdfPage
 
 ####################################################################################################
 
@@ -46,17 +46,26 @@ _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
-class Document:
+class PdfDocument:
 
     _logger = _module_logger.getChild('DatasheetExtractor')
 
     ##############################################
 
     def __init__(self, url: str, cache_path: str or Path = '.') -> None:
-        self._url = str(url)
+        url = str(url)
+        parsed_url = urlparse(url)
+        # Fixme: cls
         self._cache_path = Path(cache_path)
-        self._path = None
         self._doc = None
+        if parsed_url.scheme:
+            self._url = url
+            self._path = None
+            #! self.download()
+        else:
+            self._url = None
+            self._path = url
+            self._load()
 
     ##############################################
 
@@ -112,9 +121,21 @@ class Document:
 
     ##############################################
 
-    def _load_page(self, page_number: int) -> Page:
-        doc = self._load()
-        fitz_page = doc[page_number -1]
-        return Page(self, page_number, fitz_page)
+    def _load_page(self, page_number: int) -> PdfPage:
+        if page_number < len(self):
+            doc = self._load()
+            fitz_page = doc[page_number -1]
+            return PdfPage(self, page_number, fitz_page)
+        else:
+            raise ValueError(f"Out of page index {page_number}")
+
+    ##############################################
+
+    def __len__(self) -> int:
+        return self._doc.page_count
+
+    def __iter__(self) -> Iterator[PdfPage]:
+        for i in range(len(self)):
+            yield self[i]
 
     __getitem__ = _load_page

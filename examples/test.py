@@ -9,20 +9,25 @@ logging.info('Start ...')
 ####################################################################################################
 
 from pprint import pprint
+from pathlib import Path
 
 import os
 
 from DatasheetExtractor import Document, Page
-from DatasheetExtractor.Extractor import PinoutExtractor
+from DatasheetExtractor.backend.Extractor import PinoutExtractor
 
 ####################################################################################################
 
 url = 'https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf'
+path = Path('.', 'devices', 'AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf')
+url = path
+print(url)
 
 document = Document(url, cache_path='devices')
 # document.download()
 
 document._load()
+1/0
 
 ####################################################################################################
 
@@ -142,5 +147,5 @@ def process_multiplexing_table(page_number):
 
 ####################################################################################################
 
-for _ in (18, 19):
-    process_multiplexing_table(_)
+# for _ in (18, 19):
+#     process_multiplexing_table(_)

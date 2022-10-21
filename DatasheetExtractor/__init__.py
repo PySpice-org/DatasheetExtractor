@@ -25,12 +25,12 @@ __version__ = ''
 
 __all__ = [
     'setup_logging',
-    'Document',
-    'Page',
+    'PdfDocument',
+    'PdfPage',
 ]
 
 ####################################################################################################
 
 from .Logging import setup_logging
-from .document import Document
-from .page import Page
+from .backend.pdf.document import PdfDocument
+from .backend.pdf.page import PdfPage
