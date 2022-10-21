@@ -4,6 +4,11 @@ __pycache__
 nogit
 __TRASH__
 
+DatasheetExtractor/frontend/rcc/Ressource.py
+DatasheetExtractor/frontend/rcc/application.rcc
+
+mamba-dist/
+
 avr-datasheet-extractor
 
 devices/AVR128DA28-32-48-64-Data-Sheet-40002183C.html
@@ -12,5 +17,16 @@ devices/AVR128DA28-32-48-64-Data-Sheet-40002183C.stxt
 devices/AVR128DA28-32-48-64-Data-Sheet-40002183C.txt
 devices/Infineon-1EDCxxI12AH-DataSheet-v02_00-EN.pdf
 devices/Infineon-1EDCxxI12AH-DataSheet-v02_00-EN.txt
+devices/NINA-B1_DataSheet_UBX-15019243.pdf
+devices/NINA-W10_DataSheet_UBX-17065507.pdf
 
 doc/standards/
+
+DatasheetExtractor/frontend/qml/Widgets/dev/
+
+DatasheetExtractor/frontend/rcc/icons/svg/flip-from-page.svg
+DatasheetExtractor/frontend/rcc/icons/svg/recto-page.svg
+DatasheetExtractor/frontend/rcc/icons/svg/verso-page.svg
+
+dev/label.png
+dev/p17.png
