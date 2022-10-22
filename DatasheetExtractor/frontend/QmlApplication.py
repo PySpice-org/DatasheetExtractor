@@ -38,6 +38,7 @@ import sys
 import traceback
 
 # We use https://github.com/spyder-ide/qtpy Qt shim
+import qtpy
 from qtpy import QtCore
 from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
@@ -65,6 +66,7 @@ from .rcc import Ressource
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
+_module_logger.info(f'Qt binding is {qtpy.API_NAME} {QtCore.__version__}')
 
 ####################################################################################################
 
@@ -380,7 +382,7 @@ class Application(QObject):
 
     def _register_qml_types(self):
         qmlRegisterType(KeySequenceEditor, 'DatasheetExtractor', 1, 0, 'KeySequenceEditor')
-        # PyQt6 doesn't implement qmlRegisterType
+        # PyQt6 doesn't implement qmlRegisterUncreatableType ???
         # https://doc.qt.io/qtforpython/PySide6/QtQml/qmlRegisterUncreatableType.html
         #   see also https://doc.qt.io/qtforpython/PySide6/QtQml/QmlUncreatable.html#qmluncreatable
         qmlRegisterUncreatableType(Shortcut, 'DatasheetExtractor', 1, 0, 'Shortcut', 'Cannot create Shortcut')

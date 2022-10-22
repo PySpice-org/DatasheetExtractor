@@ -41,7 +41,7 @@ from qtpy.QtCore import (
     QCoreApplication
 )
 from qtpy.QtGui import QImage, QPixmap
-from qtpy.QtQml import QQmlListProperty
+# from qtpy.QtQml import QQmlListProperty
 from qtpy.QtQuick import QQuickImageProvider
 
 from PIL import ImageQt, Image
@@ -70,7 +70,8 @@ class PageImageProvider(QQuickImageProvider):
     ##############################################
 
     def __init__(self) -> None:
-        super().__init__(QQuickImageProvider.Image) # Pixmap
+        # super().__init__(QQuickImageProvider.Image) # Pixmap
+        super().__init__(QQuickImageProvider.ImageType.Image)
         self._output = None
 
     ##############################################
@@ -92,9 +93,9 @@ class PageImageProvider(QQuickImageProvider):
 
     ##############################################
 
-    def requestImage(self, image_id, size):
-        self._logger.info(f'{image_id} {size}')
-        return self._output, self._output.size()
+    def requestImage(self, image_id, size, requested_size):
+        self._logger.info(f'{image_id} {size} {requested_size}')
+        return self._output # , self._output.size()
 
     ##############################################
 

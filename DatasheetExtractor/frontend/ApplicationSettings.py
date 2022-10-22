@@ -35,7 +35,8 @@ import logging
 
 # Fixme:
 from qtpy.QtCore import QSettings
-from qtpy.QtQml import QQmlListProperty
+# Fixme: https://doc.qt.io/qtforpython/PySide6/QtQml/QQmlListReference.html
+# from qtpy.QtQml import QQmlListProperty
 from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
     # QUrl,
@@ -152,9 +153,9 @@ class ApplicationSettings(QSettings):
 
     ##############################################
 
-    @Property(QQmlListProperty, constant=True)
-    def shortcuts(self):
-        return QQmlListProperty(Shortcut, self, self._shortcuts)
+    # @Property(QQmlListProperty, constant=True)
+    # def shortcuts(self):
+    #     return QQmlListProperty(Shortcut, self, self._shortcuts)
 
     ##############################################
 
