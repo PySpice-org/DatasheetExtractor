@@ -128,7 +128,8 @@ Flickable {
             asynchronous: true
             cache: false
             fillMode: Image.PreserveAspectFit
-            smooth: flickable.moving
+            // smooth: flickable.moving
+            smooth: true
 
             // can warn "QML Image: Cannot open: file:///..."
             source: image_source

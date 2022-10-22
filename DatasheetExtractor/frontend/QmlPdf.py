@@ -34,14 +34,15 @@ import subprocess
 import time
 import uuid
 
-from qtpy.QtGui import QPixmap
-from qtpy.QtQuick import QQuickImageProvider
-from qtpy.QtCore import QCoreApplication
-from qtpy.QtQml import QQmlListProperty
 from qtpy.QtCore import (
     Property, Signal, Slot, QObject,
-    Qt, QTimer, QUrl
+    Qt,
+    QTimer, QUrl,
+    QCoreApplication
 )
+from qtpy.QtGui import QPixmap
+from qtpy.QtQml import QQmlListProperty
+from qtpy.QtQuick import QQuickImageProvider
 
 from PIL import ImageQt, Image
 
@@ -361,7 +362,7 @@ class QmlPdfPage(QObject):
     def generate_pixmap(self):
         self._logger.info(f'generate pixmap for page {self.page_number}')
         from .QmlApplication import Application
-        image = self._page.pixmap()
+        image = self._page.pixmap(dpi=300)
         Application.instance.page_image_provider.output = image
         return str(uuid.uuid1())
 
@@ -442,6 +443,7 @@ class QmlPdf(QObject):
         self._pdf = PdfDocument(path)
         self._metadata = QmlPdfMetadata(self._pdf)
         # We must prevent garbage collection
+        # Fixme: lazy
         self._pages = [QmlPdfPage(self, page) for page in self._pdf]
 
     ##############################################
