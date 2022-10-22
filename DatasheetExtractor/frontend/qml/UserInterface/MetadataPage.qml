@@ -35,7 +35,7 @@ Page {
      *
      */
 
-    property var metadata: application.book.metadata
+    property var metadata: application.pdf.metadata
 
     /******************************************************/
 
@@ -50,28 +50,16 @@ Page {
         //      valeus are reset at startup
         //      metadata is updated each time a key is pressed
         path_label.text = metadata.path
-        isbn_textfield.text = metadata.isbn
-        title_textfield.text = metadata.title
-        authors_textfield.text = metadata.authors
-        publisher_textfield.text = metadata.publisher
-        language_textfield.text = metadata.language
-        number_of_pages_spin_box.value = metadata.number_of_pages
-        page_offset_spinbox.value = metadata.page_offset
-        year_spinbox.value = metadata.year
-        keywords_textfield.text = metadata.keywords
-        description_textfield.text = metadata.description
-        notes_viewer.html_text = metadata.notes_html
-        notes_viewer.markdown_text = metadata.notes
-    }
-
-    function update_from_isbn() {
-        metadata.update_from_isbn()
-
-        title_textfield.text = metadata.title
-        authors_textfield.text = metadata.authors
-        publisher_textfield.text = metadata.publisher
-        language_textfield.text = metadata.language
-        year_spinbox.value = metadata.year
+        // title_textfield.text = metadata.title
+        // authors_textfield.text = metadata.authors
+        // publisher_textfield.text = metadata.publisher
+        // language_textfield.text = metadata.language
+        // number_of_pages_label.text = metadata.number_of_pages
+        // year_label.text = metadata.year
+        // keywords_textfield.text = metadata.keywords
+        // description_textfield.text = metadata.description
+        // notes_viewer.html_text = metadata.notes_html
+        // notes_viewer.markdown_text = metadata.notes
     }
 
     /******************************************************/
@@ -119,26 +107,6 @@ Page {
                     }
 
                     Label {
-                        text: qsTr('ISBN')
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        Widgets.TextField {
-                            id: isbn_textfield
-                            Layout.fillWidth: true
-                            onEditingFinished: metadata.isbn = text
-                        }
-
-                        Widgets.ToolButtonTip {
-                            icon.name: 'refresh-black'
-                            tip: qsTr('Query ISBN')
-                            onClicked: update_from_isbn()
-                        }
-                    }
-                    // Binding { target: metadata; property: 'isbn'; value: isbn_textfield.text }
-
-                    Label {
                         text: qsTr('Title')
                     }
                     Widgets.TextField {
@@ -180,27 +148,12 @@ Page {
 
                     Label {
                         text: qsTr('Number of pages')
+                    } 
+                    Widgets.TextField {
+                        id: number_of_pages_label
+                        Layout.fillWidth: true
+                        readOnly: true
                     }
-                    SpinBox {
-                        id: number_of_pages_spin_box
-                        from: 0
-                        to: 1000
-                        editable: true
-                        onValueModified: metadata.number_of_pages = value
-                    }
-                    // Binding { target: metadata; property: 'number_of_pages'; value: number_of_pages_spin_box.value }
-
-                    Label {
-                        text: qsTr('Page Offset')
-                    }
-                    SpinBox {
-                        id: page_offset_spinbox
-                        from: 1
-                        to: 1000
-                        editable: true
-                        onValueModified: metadata.page_offset = value
-                    }
-                    // Binding { target: metadata; property: 'page_offset'; value: page_offset_spinbox.value }
 
                     Label {
                         text: qsTr('Year')

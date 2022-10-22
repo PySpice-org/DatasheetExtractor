@@ -29,7 +29,7 @@ from pathlib import Path
 
 from qtpy.QtCore import QCoreApplication
 
-from DatasheetExtractor.Config import ConfigInstall
+from DatasheetExtractor.config import ConfigInstall
 
 ####################################################################################################
 

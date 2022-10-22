@@ -51,8 +51,8 @@ from qtpy.QtQuick import QQuickPaintedItem, QQuickView
 from qtpy.QtWidgets import QApplication
 
 # from DatasheetExtractor.Pdf import PdfLibrary
-from DatasheetExtractor.Common.ArgparseAction import PathAction
-from DatasheetExtractor.Common.Platform import QtPlatform
+from DatasheetExtractor.common.ArgparseAction import PathAction
+from DatasheetExtractor.common.platform import QtPlatform
 from .ApplicationMetadata import ApplicationMetadata
 from .ApplicationSettings import ApplicationSettings, Shortcut
 from .KeySequenceEditor import KeySequenceEditor

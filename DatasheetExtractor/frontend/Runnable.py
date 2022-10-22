@@ -28,16 +28,13 @@ __all__ = ['Worker']
 ####################################################################################################
 
 import logging
-import sys
 import traceback
 
 ####################################################################################################
 
-from qtpy.QtCore import QRunnable
-from qtpy.QtQml import QQmlListProperty
 from qtpy.QtCore import (
-    Property, Signal, Slot, QObject,
-    Qt, QTimer, QUrl
+    QRunnable,
+    Signal, Slot, QObject
 )
 
 ####################################################################################################
@@ -70,7 +67,7 @@ class WorkerSignals(QObject):
 
     finished = Signal()
     error = Signal(tuple)
-    result = Signal(str) # Fixme: object
+    result = Signal(str)   # Fixme: object
     progress = Signal(int)
 
 ####################################################################################################
@@ -93,10 +90,8 @@ class Worker(QRunnable):
 
     ##############################################
 
-    def __init__(self, callback, *args, **kwargs):
-
+    def __init__(self, callback, *args: list, **kwargs: dict) -> None:
         super().__init__()
-
         self._callback = callback
         self._args = args
         self._kwargs = kwargs
@@ -105,16 +100,14 @@ class Worker(QRunnable):
     ##############################################
 
     @property
-    def signals(self):
+    def signals(self) -> Signal:
         return self._signals
 
     ##############################################
 
     @Slot()
-    def run(self):
-
+    def run(self) -> None:
         self._logger.info('run {}({}, {})'.format(self._callback, self._args, self._kwargs))
-
         try:
             result = self._callback(
                 *self._args, **self._kwargs,

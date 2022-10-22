@@ -43,20 +43,25 @@ Widgets.ImageViewer {
 
     function first_page() {
         pdf_page = pdf.first_page
+        // Fixme:
+        // to_page(pdf.first_page_number)
         page_changed()
     }
 
     function last_page() {
-        pdf_page = pdf.last_page
+        // pdf_page = pdf.last_page
+        to_page(pdf.last_page_number)
         page_changed()
     }
 
     function to_page(page_number) {
         console.info("to_page ", page_number)
         if (pdf.is_valid_page_number(page_number)) {
+            console.info('before pdf.page')
             pdf_page = pdf.page(page_number)
+            console.info('after pdf.page')
             var path = pdf_page.generate_pixmap()
-            console.info("pixmap ", path)
+            // console.info("pixmap ", path)
             image_source = 'image://page_image/' + path
             page_changed()
         }

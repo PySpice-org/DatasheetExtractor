@@ -47,11 +47,6 @@ ToolBar {
 
         RowLayout {
             Widgets.ToolButtonTip {
-                action: actions.reload_action
-                tip: qsTr('Reload book')
-            }
-
-            Widgets.ToolButtonTip {
                 icon.name: 'library-books-black'
                 tip: qsTr('Show Book Library')
                 onClicked: stack_layout.set_library_page()

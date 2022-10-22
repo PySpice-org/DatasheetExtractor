@@ -112,35 +112,13 @@ RowLayout {
         onClicked: page_viewer_page.toggle_grid()
     }
 
-    Widgets.ToolButtonTip {
-        action: actions.flip_action
-        tip: qsTr('Flip page')
-    }
-
-    Widgets.ToolButtonTip {
-        icon.name: 'recto-page'
-        tip: qsTr('Flip page as recto')
-        onClicked: page_viewer.set_recto()
-    }
-
-    Widgets.ToolButtonTip {
-        icon.name: 'verso-page'
-        tip: qsTr('Flip page as verso')
-        onClicked: page_viewer.set_verso()
-    }
-
-    Widgets.ToolButtonTip {
-        icon.name: 'flip-from-page'
-        tip: qsTr('Flip page from this page')
-        onClicked: page_viewer.flip_from_page()
-    }
-
-
+    /*
     Widgets.ToolButtonTip {
         icon.name: 'subject-black'
         tip: qsTr('Convert to text using OCR engine')
         onClicked: page_viewer_page.convert_to_text()
     }
+    */
 
     Widgets.ToolButtonTip {
         action: actions.open_page_in_external_program_action

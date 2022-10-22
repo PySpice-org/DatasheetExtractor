@@ -40,7 +40,7 @@ from qtpy.QtCore import (
     QTimer, QUrl,
     QCoreApplication
 )
-from qtpy.QtGui import QPixmap
+from qtpy.QtGui import QImage, QPixmap
 from qtpy.QtQml import QQmlListProperty
 from qtpy.QtQuick import QQuickImageProvider
 
@@ -50,6 +50,7 @@ import markdown
 
 #! from DatasheetExtractor.Thumbnail import FreeDesktopThumbnailCache # Fixme: Linux only
 from DatasheetExtractor.backend.pdf.document import PdfDocument
+from DatasheetExtractor.backend.pdf.page import PdfPage
 #! from .Runnable import Worker
 
 ####################################################################################################
@@ -68,7 +69,7 @@ class PageImageProvider(QQuickImageProvider):
 
     ##############################################
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(QQuickImageProvider.Image) # Pixmap
         self._output = None
 
@@ -80,12 +81,19 @@ class PageImageProvider(QQuickImageProvider):
 
     @output.setter
     def output(self, image):
-        self._output = ImageQt.ImageQt(Image.fromarray(image))
+        # self._output = ImageQt.ImageQt(Image.fromarray(image))
+        fmt = (
+            QImage.Format.Format_RGBA8888
+            if image.alpha
+            else QImage.Format.Format_RGB888
+        )
+        # .samples_mv crash !
+        self._output = QImage(image.samples, image.width, image.height, image.stride, fmt)
 
     ##############################################
 
     def requestImage(self, image_id, size):
-        self._logger.info('{} {}'.format(image_id, size))
+        self._logger.info(f'{image_id} {size}')
         return self._output, self._output.size()
 
     ##############################################
@@ -120,7 +128,8 @@ class QmlPdfMetadata(QObject):
 
     @Property(str, constant=True)
     def path(self):
-        return self._metadata.path_str
+        # return self._metadata.path_str
+        return self._pdf.path
 
     ##############################################
 
@@ -168,18 +177,9 @@ class QmlPdfMetadata(QObject):
 
     ##############################################
 
-    number_of_pages_changed = Signal()
-
-    @Property(int, notify=number_of_pages_changed)
-    def number_of_pages(self):
-        return self._metadata.number_of_pages
-
-    @number_of_pages.setter
-    def number_of_pages(self, value):
-        if self.number_of_pages != value:
-            self._metadata.number_of_pages = value
-            self.number_of_pages_changed.emit()
-            self._set_dirty()
+    @Property(int, constant=True)
+    def number_of_pages(self) -> int:
+        return self._pdf.number_of_pages
 
     ##############################################
 
@@ -293,7 +293,7 @@ class QmlPdfPage(QObject):
 
     ##############################################
 
-    def __init__(self, qml_pdf, pdf_page):
+    def __init__(self, qml_pdf: 'QmlPdf', pdf_page: PdfPage) -> None:
         super().__init__()
         self._qml_pdf = qml_pdf
         self._page = pdf_page
@@ -302,23 +302,14 @@ class QmlPdfPage(QObject):
 
     ##############################################
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{0} {1}'.format(self.__class__.__name__, self._page)
 
     ##############################################
 
     @property
-    def page(self):
+    def page(self) -> PdfPage:
         return self._page
-
-    ##############################################
-
-    path_changed = Signal()
-
-    @Property(str, notify=path_changed)
-    def path(self):
-        #! return str(self._page.path)
-        return '...'
 
     ##############################################
 
@@ -352,17 +343,17 @@ class QmlPdfPage(QObject):
     page_number_changed = Signal()
 
     @Property(int, notify=page_number_changed)
-    def page_number(self):
-        # return int(self._page)
+    def page_number(self) -> int:
         return self._page.number
 
     ##############################################
 
     @Slot(result=str)
-    def generate_pixmap(self):
+    def generate_pixmap(self) -> str:
         self._logger.info(f'generate pixmap for page {self.page_number}')
         from .QmlApplication import Application
         image = self._page.pixmap(dpi=300)
+        # Fixme: instance is not available at startup
         Application.instance.page_image_provider.output = image
         return str(uuid.uuid1())
 
@@ -423,11 +414,12 @@ class QmlPdfPage(QObject):
     ##############################################
 
     @Slot(str)
-    def open_in_external_program(self, program):
-        command = (program, self.path)
-        self._logger.info(' '.join(command))
-        process = subprocess.Popen(command)
-
+    def open_in_external_program(self, program: str) -> None:
+        # command = (program, self.path)
+        # self._logger.info(' '.join(command))
+        # process = subprocess.Popen(command)
+        raise NotImplementedError
+    
 ####################################################################################################
 
 class QmlPdf(QObject):
@@ -438,24 +430,24 @@ class QmlPdf(QObject):
 
     ##############################################
 
-    def __init__(self, path):
+    def __init__(self, path: str) -> None:
         super().__init__()
         self._pdf = PdfDocument(path)
         self._metadata = QmlPdfMetadata(self._pdf)
         # We must prevent garbage collection
-        # Fixme: lazy
-        self._pages = [QmlPdfPage(self, page) for page in self._pdf]
+        # self._pages = [QmlPdfPage(self, page) for page in self._pdf]
+        self._pages = {}
 
     ##############################################
 
     @Property(str, constant=True)
-    def path(self):
+    def path(self) -> str:
         return str(self._pdf.path)
 
     ##############################################
 
     @Property(QmlPdfMetadata, constant=True)
-    def metadata(self):
+    def metadata(self) -> QmlPdfMetadata:
         return self._metadata
 
     ##############################################
@@ -463,51 +455,66 @@ class QmlPdf(QObject):
     number_of_pages_changed = Signal()
 
     @Property(int, notify=number_of_pages_changed)
-    def number_of_pages(self):
-        # return self._pdf.number_of_pages
-        return len(self._pages)
+    def number_of_pages(self) -> int:
+        return self._pdf.number_of_pages
 
     @Slot(int, result=bool)
-    def is_valid_page_number(self, page_number):
+    def is_valid_page_number(self, page_number: int) -> bool:
         return 0 < page_number <= self.number_of_pages
 
     ##############################################
 
-    last_page_number_changed = Signal()
+    @Property(int, constant=True)
+    def first_page_number(self) -> int:
+        return self._pdf.first_page_number
 
-    @Property(int, notify=last_page_number_changed)
-    def last_page_number(self):
+    @Property(int, constant=True)
+    def last_page_number(self) -> int:
         return self._pdf.last_page_number
 
     ##############################################
 
-    pages_changed = Signal()
+    def _page(self, page_number: int) -> QmlPdfPage:
+        self._logger.info(f"Retrieve page {page_number}")
+        if page_number not in self._pages:
+            self._logger.info(f"create {page_number}")
+            page = self._pdf[page_number]
+            qml_page = QmlPdfPage(self, page)
+            self._pages[page_number] = qml_page
+            return qml_page
+        else:
+            return self._pages[page_number]
 
-    @Property(QQmlListProperty, notify=pages_changed)
-    def pages(self):
-        return QQmlListProperty(QmlPdfPage, self, self._pages)
+    ##############################################
+
+    # pages_changed = Signal()
+
+    # @Property(QQmlListProperty, notify=pages_changed)
+    # def pages(self):
+    #     return QQmlListProperty(QmlPdfPage, self, self._pages)
 
     ##############################################
 
     @Property(QmlPdfPage)
-    def first_page(self):
-        try:
-            # return self._pages[0]
-            return self._pages[1]
-        except IndexError:
-            return None
+    def first_page(self) -> QmlPdfPage:
+        # try:
+        return self._page(self._pdf.first_page_number)
+        # except IndexError:
+        #     return None
 
     @Property(QmlPdfPage)
-    def last_page(self):
-        try:
-            return self._pages[-1]
-        except IndexError:
-            return None
+    def last_page(self) -> QmlPdfPage:
+        # try:
+        return self._page(self._pdf.last_page_number)
+        # except IndexError:
+        #     return None
 
     @Slot(int, result=QmlPdfPage)
-    def page(self, page_number):
-        try:
-            # return self._pages[page_number-1]
-            return self._pages[page_number]
-        except IndexError:
-            return None
+    def page(self, page_number: int) -> QmlPdfPage:
+        self._logger.info(f'page {page_number}')
+        # try:
+        _ = self._page(page_number)
+        self._logger.info(f'before return {_}')
+        return _
+        # except IndexError:
+        #     return None
