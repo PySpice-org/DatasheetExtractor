@@ -1,0 +1,25 @@
+#! /bin/bash
+
+####################################################################################################
+
+MUPDF_INCLUDE_PATH=$1
+if [ -z $MUPDF_INCLUDE_PATH ]; then
+  echo Usage: generate-api MUPDF_INCLUDE_PATH
+  exit 1
+fi
+
+for f in fitz pdf ; do
+  sf=$MUPDF_INCLUDE_PATH/mupdf/$f.h
+  if ! [ -e ${sf}  ]; then
+    echo "${sf} don't exists"
+    exit 1
+  fi
+  cpp -P -I $MUPDF_INCLUDE_PATH ${sf} > tmp1.h
+  grep -v asm tmp1.h > tmp2.h
+  indent -l1024 tmp2.h
+  grep -v extern tmp2.h > $f.h
+  indent -l256 $f.h
+  rm tmp?.h*
+done
+
+for i in $(cat mupdf-usage.txt); do grep -h $i *.h; done | uniq > mupdf-tmp.h

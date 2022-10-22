@@ -1,0 +1,12 @@
+cpp directives
+comment: // /* */
+
+uint64_t
+
+__attribute__
+__extension__
+__gnuc_va_list
+__inline
+__restrict
+__stream
+va_list
