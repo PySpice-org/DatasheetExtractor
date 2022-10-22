@@ -33,10 +33,9 @@ import logging
 import io
 
 # https://github.com/pymupdf/PyMuPDF
-# import fitz
+import fitz
 
 import numpy as np
-from PIL import Image
 
 from IntervalArithmetic import IntervalInt2D
 
@@ -156,9 +155,8 @@ class PdfPage:
 
     ##############################################
 
-    def __init__(self, document: 'Document', number: int, fitz_page) -> None:
+    def __init__(self, document: 'Document', fitz_page) -> None:
         self._document = document
-        self._number = number
         self._fitz_page = fitz_page
         self._data = fitz_page.get_text('dict')
 
@@ -168,17 +166,20 @@ class PdfPage:
     ##############################################
 
     def __int__(self) -> int:
-        return self._number
+        return self._fitz_page.number
 
     # Fixme: -> page_number ?
     @property
     def number(self) -> int:
-        return self._number
+        number = self._fitz_page.number
+        if self._document.FIRST_PAGE_ONE:
+            number += 1
+        return number
 
     ##############################################
 
     def __repr__(self) -> str:
-        return f'Page {self._number}'
+        return f'Page {self.number}'
 
     ##############################################
 
@@ -192,7 +193,7 @@ class PdfPage:
 
     ##############################################
 
-    def pixmap(self, dpi: int = 72, alpha=False) -> np.ndarray:
+    def pixmap(self, dpi: int = 72, alpha=False) -> fitz.Pixmap:
         # Pixmap has the dimension of the page with width and height rounded to integers and a default resolution of 72 dpi.
         #   210 mm / 25.4 * 72 = 595.27 px
         # so at 72 dpi pixmap coordinate are equivalent to page coordinate / UNIT_SCALE
@@ -206,15 +207,25 @@ class PdfPage:
             alpha=alpha,   # whether to add an alpha channel for transparency
             annots=False,
         )
-        stream = pix.pil_tobytes(format='PNG')
-        image = Image.open(io.BytesIO(stream))
-        array = np.array(image)
+        # return pix.samples, pix.width, pix.height, pix.stride, pix.alpha
+        return pix
+
+    ##############################################
+
+    def np_pixmap(self, dpi: int = 72, alpha=False) -> np.ndarray:
+        pix = self.pixmap(dpi, alpha)
+        array = np.frombuffer(pix.samples, dtype=np.uint8)
+        array.shape = pix.height, pix.width, 3
+        # from PIL import Image
+        # stream = pix.pil_tobytes(format='PNG')
+        # image = Image.open(io.BytesIO(stream))
+        # array = np.array(image)
         return array
 
     ##############################################
 
     def to_png(self, path: str, **kwargs: dict) -> None:
-        np_array = self.pixmap(**kwargs)
+        np_array = self.np_pixmap(**kwargs)
         from PIL import Image
         image = Image.fromarray(np_array, mode='RGBA')
         image.save(path)

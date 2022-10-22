@@ -31,6 +31,6 @@ __all__ = [
 
 ####################################################################################################
 
-from .Logging import setup_logging
+from .logging import setup_logging
 from .backend.pdf.document import PdfDocument
 from .backend.pdf.page import PdfPage

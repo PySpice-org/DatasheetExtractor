@@ -39,7 +39,7 @@ import yaml
 
 ####################################################################################################
 
-from DatasheetExtractor.Config import ConfigInstall
+from DatasheetExtractor.config import ConfigInstall
 
 ####################################################################################################
 

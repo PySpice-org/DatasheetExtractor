@@ -51,6 +51,8 @@ class PdfDocument:
 
     _logger = _module_logger.getChild('DatasheetExtractor')
 
+    FIRST_PAGE_ONE = True
+
     ##############################################
 
     @classmethod
@@ -68,7 +70,7 @@ class PdfDocument:
         # Fixme: cls
         self._cache_path = Path(cache_path)
         self._doc = None
-        self._pages = []
+        self._pages = {}
         self._image_cache = None
         if parsed_url.scheme:
             self._url = url
@@ -144,20 +146,39 @@ class PdfDocument:
 
     def __len__(self) -> int:
         return self._doc.page_count
+ 
+    ##############################################
+
+    @property
+    def first_page_number(self) -> int:
+        return 1 if self.FIRST_PAGE_ONE else 0
+
+    @property
+    def last_page_number(self) -> int:
+        l = len(self)
+        return l if self.FIRST_PAGE_ONE else l -1
+
+    ##############################################
+
+    def _get_page_number(self, page_number: int) -> int:
+        if self.FIRST_PAGE_ONE:
+            page_number -= 1
+        return page_number
 
     ##############################################
 
     def _load_page(self, page_number: int) -> PdfPage:
-        # if not from_zero:
-        #     page_number -= 1
-        if page_number < len(self):
+        page_number_ = self._get_page_number(page_number)
+        if page_number_ < len(self):
             # for page in doc:
             # for page in reversed(doc):
             # for page in doc.pages(start, stop, step):
-            fitz_page = self._doc[page_number]
-            return PdfPage(self, page_number, fitz_page)
+            fitz_page = self._doc[page_number_]
+            return PdfPage(self, fitz_page)
         else:
-            raise ValueError(f"Out of page index {page_number}")
+            message = f"Out of page index {page_number}"
+            self._logger.error(message)
+            raise ValueError(message)
 
     ##############################################
 
@@ -169,12 +190,10 @@ class PdfDocument:
         else:
             return self._pages[page_number]
 
-    ##############################################
-
     @property
     def first_page(self) -> PdfPage:
-        return self._page(0)
-
+        return self._page(self.first_page_number)
+        
     ##############################################
 
     def __getitem__(self, slice_: int) -> PdfPage:
@@ -184,16 +203,20 @@ class PdfDocument:
         return self._page(slice_)
 
     def __iter__(self) -> Iterator[PdfPage]:
-        for i in range(len(self)):
+        first_page = self.first_page_number
+        last_page = len(self)
+        if self.FIRST_PAGE_ONE:
+            last_page += 1
+        for i in range(first_page, last_page):
             yield self._page(i)
 
     ##############################################
 
-    def iter_until(self, last_page: Optional[int] = None) -> Iterator[PdfPage]:
-        if last_page is None:
-            last_page = len(self) - 1
-        for i in range(last_page + 1):
-            yield self._page(i)
+    # def iter_until(self, last_page: Optional[int] = None) -> Iterator[PdfPage]:
+    #     if last_page is None:
+    #         last_page = len(self) - 1
+    #     for i in range(last_page + 1):
+    #         yield self._page(i)
 
 ####################################################################################################
 

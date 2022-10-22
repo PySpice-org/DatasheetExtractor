@@ -29,7 +29,7 @@ import os
 
 ####################################################################################################
 
-from DatasheetExtractor.backend.pdf.page import Page
+from DatasheetExtractor.backend.pdf.page import PdfPage
 
 ####################################################################################################
 
@@ -41,7 +41,7 @@ class PinoutExtractor:
 
     ##############################################
 
-    def __init__(self, page: Page) -> None:
+    def __init__(self, page: PdfPage) -> None:
         self._page = page
 
     ##############################################

@@ -13,8 +13,8 @@ from pathlib import Path
 
 import os
 
-from DatasheetExtractor import Document, Page
-from DatasheetExtractor.backend.Extractor import PinoutExtractor
+from DatasheetExtractor import PdfDocument, PdfPage
+from DatasheetExtractor.backend.extractor import PinoutExtractor
 
 ####################################################################################################
 
@@ -23,18 +23,15 @@ path = Path('.', 'devices', 'AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf')
 url = path
 print(url)
 
-document = Document(url, cache_path='devices')
-# document.download()
-
-document._load()
-1/0
+document = PdfDocument(url, cache_path='devices')
 
 ####################################################################################################
 
-# page = document[18]
-# array = page.pixmap()
-# print(page.width, page.height)
-# print(array.shape)
+page = document[18]
+array = page.pixmap()
+print(page.width, page.height)
+print(array.shape)
+1/0
 
 ####################################################################################################
 

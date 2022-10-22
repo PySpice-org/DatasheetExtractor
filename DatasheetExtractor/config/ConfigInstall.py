@@ -27,7 +27,7 @@ import sys
 
 ####################################################################################################
 
-from DatasheetExtractor.Tools import PathTools   # due to Path class
+from DatasheetExtractor.common import PathTools   # due to Path class
 
 ####################################################################################################
 

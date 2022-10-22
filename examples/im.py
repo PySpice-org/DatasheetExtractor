@@ -9,15 +9,19 @@ logging.info('Start ...')
 ####################################################################################################
 
 from pprint import pprint
+from pathlib import Path
 
 import os
 
-from DatasheetExtractor import Document, Page
+from DatasheetExtractor import PdfDocument, PdfPage
 
 import numpy as np
 import cv2 as cv
 
-import mamba
+try:
+    import mamba
+except ModuleNotFoundError:
+    pass
 
 import matplotlib.pyplot as plt
 
@@ -78,11 +82,13 @@ def np2mamba(array, image):
 ####################################################################################################
 
 url = 'https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf'
+path = Path('.', 'devices', 'AVR128DA28-32-48-64-Data-Sheet-40002183C.pdf')
+url = path
+print(url)
 
-document = Document(url, cache_path='devices')
-document._load()
+document = PdfDocument(url, cache_path='devices')
 page = document[14]
-image = page.pixmap()
+image = page.np_pixmap()
 print(page.width, page.height)
 print(image.shape)
 
