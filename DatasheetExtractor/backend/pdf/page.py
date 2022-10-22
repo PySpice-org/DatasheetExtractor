@@ -138,6 +138,9 @@ class Line:
 
 class PdfPage:
 
+    # API: https://pymupdf.readthedocs.io/en/latest/page.html
+    # Appendix 1: Details on Text Extraction https://pymupdf.readthedocs.io/en/latest/app1.html
+
     ###! to transform float X.12... to int X1
     UNIT_SCALE = 10
 
@@ -158,6 +161,9 @@ class PdfPage:
         self._number = number
         self._fitz_page = fitz_page
         self._data = fitz_page.get_text('dict')
+
+        # page.get_links()
+        # page.annots()
 
     ##############################################
 
@@ -186,7 +192,7 @@ class PdfPage:
 
     ##############################################
 
-    def pixmap(self):
+    def pixmap(self, dpi: int = 72, alpha=False) -> np.ndarray:
         # Pixmap has the dimension of the page with width and height rounded to integers and a default resolution of 72 dpi.
         #   210 mm / 25.4 * 72 = 595.27 px
         # so at 72 dpi pixmap coordinate are equivalent to page coordinate / UNIT_SCALE
@@ -194,16 +200,24 @@ class PdfPage:
         # https://pymupdf.readthedocs.io/en/latest/pixmap.html#pixmap
         pix = self._fitz_page.get_pixmap(
             # matrix=,
-            dpi=72,
+            dpi=dpi,
             # colorspace=,
             # clip=,
-            alpha=False,
+            alpha=alpha,   # whether to add an alpha channel for transparency
             annots=False,
         )
         stream = pix.pil_tobytes(format='PNG')
         image = Image.open(io.BytesIO(stream))
         array = np.array(image)
         return array
+
+    ##############################################
+
+    def to_png(self, path: str, **kwargs: dict) -> None:
+        np_array = self.pixmap(**kwargs)
+        from PIL import Image
+        image = Image.fromarray(np_array, mode='RGBA')
+        image.save(path)
 
     ##############################################
 
