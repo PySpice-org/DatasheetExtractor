@@ -225,9 +225,13 @@ class PdfPage:
     ##############################################
 
     def to_png(self, path: str, **kwargs: dict) -> None:
-        np_array = self.np_pixmap(**kwargs)
         from PIL import Image
-        image = Image.fromarray(np_array, mode='RGBA')
+        # np_array = self.np_pixmap(**kwargs)
+        # Fixme: ValueError: buffer is not large enough
+        # image = Image.fromarray(np_array, mode='RGBA')
+        pix = self.pixmap(**kwargs)
+        stream = pix.pil_tobytes(format='PNG')
+        image = Image.open(io.BytesIO(stream))
         image.save(path)
 
     ##############################################
