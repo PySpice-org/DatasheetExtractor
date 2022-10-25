@@ -41,10 +41,19 @@ ToolBar {
         ToolButton {
             action: Action {
                 id: sidebar_open_action
+                property bool first_time: true
                 checkable: true
                 checked: sidebar.opened
                 icon.source: checked ? "qrc:/icons/svg/sidebar-collapse-left.svg" : "qrc:/icons/svg/sidebar-expand-left.svg"
-                onTriggered: sidebar.open()
+                // onTriggered: checked ? sidebar.close() : sidebar.open()
+                onTriggered: {
+                    if (first_time) {
+                        first_time = false
+                        sidebar.open()
+                    } else {
+                        checked ? sidebar.close() : sidebar.open()
+                    }
+                }
             }
             ToolTip.visible: enabled && hovered
             ToolTip.delay: 2000

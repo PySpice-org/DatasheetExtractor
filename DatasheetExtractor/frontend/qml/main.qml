@@ -81,7 +81,6 @@ ApplicationWindow {
     Component.onCompleted: {
         console.info('ApplicationWindow.onCompleted')
         console.info(application.pdf)
-        console.log("sidebar y", stack_layout.y)
         application.show_message.connect(on_message)
         application.show_error.connect(on_error)
         application_window.showMaximized()
@@ -251,7 +250,6 @@ ApplicationWindow {
         function set_pdf_viewer_page() { currentIndex = 4 }
 
         Component.onCompleted: {
-            console.log("sidebar y", stack_layout.y, pdf_viewer_page.y)
             pdf_viewer_page.sidebar.y = menu_bar.height + header_tool_bar.height
             /*
             if (application.library)

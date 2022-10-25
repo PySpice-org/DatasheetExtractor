@@ -74,7 +74,7 @@ Page {
         edge: Qt.LeftEdge
         modal: false
         width: 300
-        // y: application_window.header_tool_bar.height
+        y: application_window.menu_bar.height + application_window.header_tool_bar.height
         height: page_viewer.height
         dim: false
         clip: true
