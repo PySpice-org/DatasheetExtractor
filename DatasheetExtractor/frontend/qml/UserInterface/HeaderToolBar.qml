@@ -37,6 +37,7 @@ ToolBar {
 
     property var actions
     property var page_viewer_page
+    property var pdf_viewer_page
     property var stack_layout
 
     /******************************************************/
@@ -46,11 +47,13 @@ ToolBar {
         spacing: 10
 
         RowLayout {
+            /*
             Widgets.ToolButtonTip {
                 icon.name: 'library-books-black'
                 tip: qsTr('Show Book Library')
                 onClicked: stack_layout.set_library_page()
             }
+            */
 
             Widgets.ToolButtonTip {
                 icon.name: 'edit-black'
@@ -58,11 +61,13 @@ ToolBar {
                 onClicked: stack_layout.set_metadata_page()
             }
 
+            /*
             Widgets.ToolButtonTip {
                 icon.name: 'view-comfy-black'
                 tip: qsTr('Show page thumbnails')
                 onClicked: stack_layout.set_thumbnail_page()
             }
+            */
 
             Widgets.ToolButtonTip {
                 // icon.name: 'image-black'
@@ -71,14 +76,31 @@ ToolBar {
                 onClicked: stack_layout.set_viewer_page()
             }
 
+            Widgets.ToolButtonTip {
+                icon.name: 'picture_as_pdf-black'
+                tip: qsTr('Show PDF viewer')
+                onClicked: stack_layout.set_pdf_viewer_page()
+            }
         }
 
         Ui.PageViewerToolBar {
             visible: page_viewer_page.visible
 
+            // why root. ?
             actions: root.actions
             page_viewer: root.page_viewer_page.page_viewer
             page_viewer_page: root.page_viewer_page
+        }
+
+        Ui.PdfViewerToolBar {
+            visible: pdf_viewer_page.visible
+            // anchors.fill: parent
+            // anchors.rightMargin: 6
+
+            actions: root.actions
+            pdf_viewer_page: root.pdf_viewer_page
+            doc: root.pdf_viewer_page.doc
+            page_viewer: root.pdf_viewer_page.page_viewer
         }
 
         Item {

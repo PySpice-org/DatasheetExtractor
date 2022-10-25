@@ -23,7 +23,9 @@ import QtQuick.Controls 2.4
 
 ToolButton {
     // property alias tip: ToolTip.text
-    property string tip: null
+    // Invalid property assignment: string expected - Assigning null to incompatible properties in QML is deprecated.
+    // This will become a compile error in future versions of Qt.
+    property string tip: ''
     property int size: 22
 
     icon.height: size

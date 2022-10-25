@@ -18,9 +18,9 @@
  *
  ***************************************************************************************************/
 
-import QtQuick 2.11
-import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.11
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
 import DatasheetExtractor 1.0
 import Widgets 1.0 as Widgets
@@ -35,7 +35,10 @@ ApplicationWindow {
      *
      */
 
-     property var shortcuts: null
+    property alias header_tool_bar: header_tool_bar
+    property alias stack_layout: stack_layout
+
+    property var shortcuts: null
 
     function close_application(close) {
         console.info('Close application')
@@ -78,6 +81,7 @@ ApplicationWindow {
     Component.onCompleted: {
         console.info('ApplicationWindow.onCompleted')
         console.info(application.pdf)
+        console.log("sidebar y", stack_layout.y)
         application.show_message.connect(on_message)
         application.show_error.connect(on_error)
         application_window.showMaximized()
@@ -116,6 +120,22 @@ ApplicationWindow {
     Widgets.ErrorMessageDialog {
         id: error_message_dialog
         title: qsTr('An error occurred in the application')
+
+        /*
+        id: errorDialog
+        title: "Error loading " + doc.source
+        standardButtons: Dialog.Close
+        modal: true
+        closePolicy: Popup.CloseOnEscape
+        anchors.centerIn: parent
+        width: 300
+        visible: doc.status === PdfDocument.Error
+
+        contentItem: Label {
+            id: errorField
+            text: doc.error
+        }
+        */
     }
 
     // Widgets.PdfFolderDialog {
@@ -128,6 +148,26 @@ ApplicationWindow {
         id: options_dialog
     }
 
+    Dialog {
+        id: password_dialog
+        title: "Password"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        modal: true
+        closePolicy: Popup.CloseOnEscape
+        anchors.centerIn: parent
+        width: 300
+
+        contentItem: TextField {
+            id: passwordField
+            placeholderText: qsTr("Please provide the password")
+            echoMode: TextInput.Password
+            width: parent.width
+            onAccepted: passwordDialog.accept()
+        }
+        onOpened: passwordField.forceActiveFocus()
+        onAccepted: doc.password = passwordField.text
+    }
+
     /*******************************************************
      *
      * Actions
@@ -137,6 +177,25 @@ ApplicationWindow {
     Ui.Actions {
         id: actions
         page_viewer: page_viewer_page.page_viewer
+    }
+
+    /*******************************************************
+     *
+     * File Drop
+     *
+     */
+
+    DropArea {
+        anchors.fill: parent
+        keys: ["text/uri-list"]
+        onEntered: (drag) => {
+            drag.accepted = (drag.proposedAction === Qt.MoveAction || drag.proposedAction === Qt.CopyAction) &&
+                drag.hasUrls && drag.urls[0].endsWith("pdf")
+        }
+        onDropped: (drop) => {
+            load_pdf(drop.urls[0])
+            drop.acceptProposedAction()
+        }
     }
 
     /*******************************************************
@@ -165,6 +224,7 @@ ApplicationWindow {
         id: header_tool_bar
         actions: actions
         page_viewer_page: page_viewer_page
+        pdf_viewer_page: pdf_viewer_page
         stack_layout: stack_layout
     }
 
@@ -175,7 +235,7 @@ ApplicationWindow {
      */
 
     StackLayout {
-       id: stack_layout
+        id: stack_layout
         anchors.fill: parent
 
         // enum ApplicationPage {
@@ -191,6 +251,8 @@ ApplicationWindow {
         function set_pdf_viewer_page() { currentIndex = 4 }
 
         Component.onCompleted: {
+            console.log("sidebar y", stack_layout.y, pdf_viewer_page.y)
+            pdf_viewer_page.sidebar.y = menu_bar.height + header_tool_bar.height
             /*
             if (application.library)
                 set_library_page()
@@ -223,6 +285,8 @@ ApplicationWindow {
 
         Ui.PdfViewerPage {
             id: pdf_viewer_page
+            application_window: application_window
+            password_dialog: password_dialog
         }
     }
 
@@ -234,5 +298,6 @@ ApplicationWindow {
 
     footer: Ui.FooterToolBar {
         id: footer_tool_bar
+        sidebar: pdf_viewer_page.sidebar
     }
 }

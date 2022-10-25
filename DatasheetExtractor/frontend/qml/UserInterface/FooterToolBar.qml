@@ -33,11 +33,84 @@ ToolBar {
 
     property alias message: message_label.text
 
+    property var sidebar
+
     /******************************************************/
 
     RowLayout {
+        ToolButton {
+            action: Action {
+                id: sidebar_open_action
+                checkable: true
+                checked: sidebar.opened
+                icon.source: checked ? "qrc:/icons/svg/sidebar-collapse-left.svg" : "qrc:/icons/svg/sidebar-expand-left.svg"
+                onTriggered: sidebar.open()
+            }
+            ToolTip.visible: enabled && hovered
+            ToolTip.delay: 2000
+            ToolTip.text: "open sidebar"
+        }
+
         Label {
             id: message_label
         }
+
+        /*
+        ToolButton {
+            action: Action {
+                icon.source: "qrc:/pdfviewer/resources/go-up-search.svg"
+                shortcut: StandardKey.FindPrevious
+                onTriggered: view.searchBack()
+            }
+            ToolTip.visible: enabled && hovered
+            ToolTip.delay: 2000
+            ToolTip.text: "find previous"
+        }
+
+        TextField {
+            id: search_field
+            placeholderText: "search"
+            Layout.minimumWidth: 150
+            Layout.fillWidth: true
+            Layout.bottomMargin: 3
+            onAccepted: {
+                sidebar.open()
+                sidebarTabs.setCurrentIndex(0)
+            }
+            Image {
+                visible: search_field.text !== ""
+                source: "qrc:/pdfviewer/resources/edit-clear.svg"
+                sourceSize.height: search_field.height - 6
+                anchors {
+                    right: parent.right
+                    verticalCenter: parent.verticalCenter
+                    margins: 3
+                }
+                TapHandler {
+                    onTapped: search_field.clear()
+                }
+            }
+        }
+
+        ToolButton {
+            action: Action {
+                icon.source: "qrc:/pdfviewer/resources/go-down-search.svg"
+                shortcut: StandardKey.FindNext
+                onTriggered: view.searchForward()
+            }
+            ToolTip.visible: enabled && hovered
+            ToolTip.delay: 2000
+            ToolTip.text: "find next"
+        }
+
+        Label {
+            id: status_label
+            property size implicitPointSize: doc.pagePointSize(view.currentPage)
+            text: "page " + (currentPageSB.value) + " of " + doc.pageCount +
+                " scale " + view.renderScale.toFixed(2) +
+                " original " + implicitPointSize.width.toFixed(1) + "x" + implicitPointSize.height.toFixed(1) + " pt"
+            visible: doc.pageCount > 0
+        }
+        */
     }
 }

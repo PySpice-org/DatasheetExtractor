@@ -10,6 +10,18 @@
     </qresource>
 
     <qresource prefix="/">
+      <!-- Fixme: Use SVG ? -->
+      <!-- Fixme: _ vs - -->
+
+      <!-- Fixme: line color is not black -->
+      <file>icons/svg/sidebar-collapse-left.svg</file>
+      <file>icons/svg/sidebar-expand-left.svg</file>
+      <file>icons/svg/zoom-fit-best.svg</file>
+      <file>icons/svg/zoom-fit-width.svg</file>
+      <file>icons/svg/zoom-in.svg</file>
+      <file>icons/svg/zoom-original.svg</file>
+      <file>icons/svg/zoom-out.svg</file>
+      
 	<file>icons/material/index.theme</file>
 
 	<!-- A -->
@@ -112,6 +124,15 @@
         <!-- <file>icons/material/24x24@2/first-page-black.png</file> -->
         <file>icons/material/36x36@2/first-page-black.png</file>
         <!-- <file>icons/material/48x48@2/first-page-black.png</file> -->
+
+        <!-- <file>icons/material/18x18/fit_screen-black.png</file> -->
+        <!-- <file>icons/material/24x24/fit_screen-black.png</file> -->
+        <file>icons/material/36x36/fit_screen-black.png</file>
+        <!-- <file>icons/material/48x48/fit_screen-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/fit_screen-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/fit_screen-black.png</file> -->
+        <file>icons/material/36x36@2/fit_screen-black.png</file>
+        <!-- <file>icons/material/48x48@2/fit_screen-black.png</file> -->
 
 	<file>icons/material/36x36/flip-from-page.png</file>
 	<file>icons/material/36x36@2/flip-from-page.png</file>
@@ -223,6 +244,15 @@
         <file>icons/material/36x36@2/pageview-black.png</file>
         <!-- <file>icons/material/48x48@2/pageview-black.png</file> -->
 
+        <!-- <file>icons/material/18x18/picture_as_pdf-black.png</file> -->
+        <!-- <file>icons/material/24x24/picture_as_pdf-black.png</file> -->
+        <file>icons/material/36x36/picture_as_pdf-black.png</file>
+        <!-- <file>icons/material/48x48/picture_as_pdf-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/picture_as_pdf-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/picture_as_pdf-black.png</file> -->
+        <file>icons/material/36x36@2/picture_as_pdf-black.png</file>
+        <!-- <file>icons/material/48x48@2/picture_as_pdf-black.png</file> -->
+
 
 	<!-- Q -->
 
@@ -258,6 +288,23 @@
         <file>icons/material/36x36@2/restore-page-black.png</file>
         <!-- <file>icons/material/48x48@2/restore-page-black.png</file> -->
 
+        <!-- <file>icons/material/18x18/rotate_left-black.png</file> -->
+        <!-- <file>icons/material/24x24/rotate_left-black.png</file> -->
+        <file>icons/material/36x36/rotate_left-black.png</file>
+        <!-- <file>icons/material/48x48/rotate_left-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/rotate_left-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/rotate_left-black.png</file> -->
+        <file>icons/material/36x36@2/rotate_left-black.png</file>
+        <!-- <file>icons/material/48x48@2/rotate_left-black.png</file> -->
+
+        <!-- <file>icons/material/18x18/rotate_right-black.png</file> -->
+        <!-- <file>icons/material/24x24/rotate_right-black.png</file> -->
+        <file>icons/material/36x36/rotate_right-black.png</file>
+        <!-- <file>icons/material/48x48/rotate_right-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/rotate_right-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/rotate_right-black.png</file> -->
+        <file>icons/material/36x36@2/rotate_right-black.png</file>
+        <!-- <file>icons/material/48x48@2/rotate_right-black.png</file> -->
 
 	<!-- S -->
 	<!-- <file>icons/material/18x18/save-black.png</file> -->
