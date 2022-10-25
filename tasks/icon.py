@@ -18,27 +18,31 @@
 #
 ####################################################################################################
 
-# http://www.pyinvoke.org
+####################################################################################################
+
+from pathlib import Path
+
+from invoke import task
+
+from .lib.MaterialIcon import MaterialIconFetcher
 
 ####################################################################################################
 
-from invoke import task, Collection
-# import sys
+SOURCE_PATH = Path(__file__).resolve().parents[1]
+ICONS_PATH = SOURCE_PATH.joinpath('DatasheetExtractor', 'frontend', 'rcc', 'icons')
 
 ####################################################################################################
 
-# SOURCE_PATH = Path(__file__).resolve().parent
-
-####################################################################################################
-
-from . import clean
-from . import doc
-from . import qt
-from . import icon
-
-ns = Collection()
-# Fixme: find generic code somewhere ...
-ns.add_collection(Collection.from_module(clean))
-ns.add_collection(Collection.from_module(doc))
-ns.add_collection(Collection.from_module(qt))
-ns.add_collection(Collection.from_module(icon))
+@task
+def fetch_icon(ctx, src_name, dst_name, style='baseline', color='white'):
+     # style: [baseline], outline, round, twotone, sharp
+     # color: [black], white
+    theme = 'material'
+    print('Icons path:', ICONS_PATH, theme)
+    fetcher = MaterialIconFetcher(ICONS_PATH, theme)
+    fetcher.fetch_icon(
+        src_name,
+        dst_name or src_name.replace('_', '-'),
+        style,
+        color,
+    )
