@@ -34,7 +34,7 @@ MenuBar {
      */
 
     property var about_dialog
-    property var pdf_folder_dialog
+    property var pdf_file_dialog
     property var options_dialog
     // application_window.close_application()
 
@@ -55,7 +55,7 @@ MenuBar {
 
         Action {
             text: qsTr('Open a pdf')
-            onTriggered: pdf_folder_dialog.open()
+            onTriggered: pdf_file_dialog.open()
         }
 
         MenuSeparator { }

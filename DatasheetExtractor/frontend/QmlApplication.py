@@ -25,6 +25,7 @@
 ####################################################################################################
 
 __all__ = [
+    'Application',
     'QmlApplication',
 ]
 
@@ -66,7 +67,7 @@ from .rcc import Ressource
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
-_module_logger.info(f'Qt binding is {qtpy.API_NAME} {QtCore.__version__}')
+_module_logger.info('Qt binding is %s %s', qtpy.API_NAME, QtCore.__version__)
 
 ####################################################################################################
 
@@ -81,47 +82,50 @@ class QmlApplication(QObject):
 
     ##############################################
 
-    def __init__(self, application):
+    def __init__(self, application: 'Application') -> None:
         super().__init__()
         self._application = application
 
     ##############################################
 
-    def notify_message(self ,message):
+    def notify_message(self, message: str) -> None:
         self.show_message.emit(str(message))
 
-    def notify_error(self, message):
+    def notify_error(self, message: str) -> None:
         backtrace_str = traceback.format_exc()
         self.show_error.emit(str(message), backtrace_str)
 
     ##############################################
 
     @Property(str, constant=True)
-    def application_name(self):
+    def application_name(self) -> str:
         return ApplicationMetadata.name
 
     @Property(str, constant=True)
-    def application_url(self):
+    def application_url(self) -> str:
         return ApplicationMetadata.url
 
     @Property(str, constant=True)
-    def about_message(self):
+    def about_message(self) -> str:
         return ApplicationMetadata.about_message()
 
     ##############################################
 
+    #!!! signal to notify a pdf was passed as argument
+    pdf_at_startup = Signal('QUrl')
+
     pdf_changed = Signal()
 
     @Property(QmlPdf, notify=pdf_changed)
-    def pdf(self):
+    def pdf(self) -> QmlPdf:
         # return null if None
         return self._application.pdf
 
     ##############################################
 
     @Slot('QUrl')
-    def load_pdf(self, url):
-        path = url.toString(QUrl.RemoveScheme)
+    def load_pdf(self, url: QUrl) -> None:
+        path = url.toString(QUrl.FormattingOptions(QUrl.RemoveScheme))
         self._application.load_pdf(path)
         self.pdf_changed.emit()
 
@@ -143,20 +147,16 @@ class Application(QObject):
     # Fixme: Singleton
 
     @classmethod
-    def create(cls, *args, **kwargs):
-
+    def create(cls, *args: list, **kwargs: dict) -> 'Application':
         if cls.instance is not None:
             raise NameError('Instance exists')
-
         cls.instance = cls(*args, **kwargs)
         return cls.instance
 
     ##############################################
 
-    def __init__(self):
-
+    def __init__(self) -> None:
         self._logger.info('Ctor')
-
         super().__init__()
 
         QtCore.qInstallMessageHandler(self._message_handler)
@@ -169,7 +169,7 @@ class Application(QObject):
         # if PdfLibrary.is_library(self._args.path):
         #     self.load_library(self._args.path)
         # else:
-        self.load_pdf(self._args.path)
+        #! self.load_pdf(self._args.path)
 
         # For Qt Labs Platform native widgets
         # self._application = QGuiApplication(sys.argv)
@@ -211,27 +211,27 @@ class Application(QObject):
         return self._args
 
     @property
-    def platform(self):
+    def platform(self) -> QtPlatform:
         return self._platform
 
     @property
-    def settings(self):
+    def settings(self) -> ApplicationSettings:
         return self._settings
 
     @property
-    def qml_application(self):
+    def qml_application(self) -> QmlApplication:
         return self._qml_application
 
-    @property
-    def thread_pool(self):
-        return self._thread_pool
+    # @property
+    # def thread_pool(self):
+    #     return self._thread_pool
 
     @property
-    def page_image_provider(self):
+    def page_image_provider(self) -> PageImageProvider:
         return self._page_image_provider
 
     @property
-    def pdf(self):
+    def pdf(self) -> QmlPdf:
         return self._pdf
 
     # @property
@@ -244,7 +244,7 @@ class Application(QObject):
 
     ##############################################
 
-    def _print_critical_message(self, message):
+    def _print_critical_message(self, message: str) -> None:
         # print('\nCritical Error on {}'.format(datetime.datetime.now()))
         # print('-'*80)
         # print(message)
@@ -252,7 +252,7 @@ class Application(QObject):
 
     ##############################################
 
-    def _message_handler(self, msg_type, context, msg):
+    def _message_handler(self, msg_type: QtCore.QtMsgType, context, msg) -> None:
         QtMsgType = QtCore.QtMsgType
         if msg_type == QtMsgType.QtDebugMsg:
             method = self._logger.debug
@@ -279,7 +279,7 @@ class Application(QObject):
 
     ##############################################
 
-    def _on_critical_exception(self, exception):
+    def _on_critical_exception(self, exception: Exception) -> None:
         message = str(exception) + '\n' + traceback.format_exc()
         self._print_critical_message(message)
         self._qml_application.notify_error(exception)
@@ -287,8 +287,7 @@ class Application(QObject):
 
     ##############################################
 
-    def _init_application(self):
-
+    def _init_application(self) -> None:
         self._application.setOrganizationName(ApplicationMetadata.organisation_name)
         self._application.setOrganizationDomain(ApplicationMetadata.organisation_domain)
 
@@ -306,21 +305,18 @@ class Application(QObject):
     ##############################################
 
     @classmethod
-    def setup_gui_application(self):
-
+    def setup_gui_application(self) -> None:
         # https://bugreports.qt.io/browse/QTBUG-55167
         # for path in (
         #         'qt.qpa.xcb.xcberror',
         # ):
         #     QtCore.QLoggingCategory.setFilterRules('{} = false'.format(path))
-
         # QQuickStyle.setStyle('Material')
-
         pass
 
     ##############################################
 
-    def _parse_arguments(self):
+    def _parse_arguments(self) -> None:
 
         parser = argparse.ArgumentParser(
             description='DatasheetExtractor',
@@ -363,14 +359,12 @@ class Application(QObject):
 
     ##############################################
 
-    def _load_translation(self):
+    def _load_translation(self) -> None:
         if self._args.dont_translate:
             return
-
         # Fixme: ConfigInstall
         # directory = ':/translations'
         directory = str(Path(__file__).parent.joinpath('rcc', 'translations'))
-
         locale = QtCore.QLocale()
         self._translator = QtCore.QTranslator()
         if self._translator.load(locale, 'pdf-browser', '.', directory, '.qm'):
@@ -380,7 +374,7 @@ class Application(QObject):
 
     ##############################################
 
-    def _register_qml_types(self):
+    def _register_qml_types(self) -> None:
         qmlRegisterType(KeySequenceEditor, 'DatasheetExtractor', 1, 0, 'KeySequenceEditor')
         # PyQt6 doesn't implement qmlRegisterUncreatableType ???
         # https://doc.qt.io/qtforpython/PySide6/QtQml/qmlRegisterUncreatableType.html
@@ -396,15 +390,14 @@ class Application(QObject):
 
     ##############################################
 
-    def _set_context_properties(self):
+    def _set_context_properties(self) -> None:
         context = self._engine.rootContext()
         context.setContextProperty('application', self._qml_application)
         context.setContextProperty('application_settings', self._settings)
 
     ##############################################
 
-    def _load_qml_main(self):
-
+    def _load_qml_main(self) -> None:
         self._logger.info('Load QML...')
 
         qml_path = Path(__file__).parent.joinpath('qml')
@@ -421,40 +414,38 @@ class Application(QObject):
 
     ##############################################
 
-    def _check_qml_is_loaded(self, obj, url):
+    def _check_qml_is_loaded(self, obj, url) -> None:
         # See https://bugreports.qt.io/browse/QTBUG-39469
         if (obj is None and url == self._qml_url):
             sys.exit(-1)
 
     ##############################################
 
-    def exec_(self):
+    def exec_(self) -> None:
         # self._view.show()
         self._logger.info('Start event loop')
         sys.exit(self._application.exec_())
 
     ##############################################
 
-    def _post_init(self):
-
+    def _post_init(self) -> None:
         # Fixme: ui refresh ???
-
         self._logger.info('post Init...')
-
+        pdf_path = Path(self._args.path)
+        if pdf_path.exists():
+            pdf_url = QUrl(f'file:{pdf_path}')
+            self._qml_application.pdf_at_startup.emit(pdf_url)
         if self._args.user_script is not None:
             self.execute_user_script(self._args.user_script)
-
         self._logger.info('Post Init Done')
 
     ##############################################
 
-    def execute_user_script(self, script_path):
-
+    def execute_user_script(self, script_path: str) -> None:
         """Execute an user script provided by file *script_path* in a context where is defined a
         variable *application* that is a reference to the application instance.
 
         """
-
         script_path = Path(script_path).absolute()
         self._logger.info('Execute user script:\n  {}'.format(script_path))
         try:
@@ -474,7 +465,7 @@ class Application(QObject):
 
     ##############################################
 
-    def load_pdf(self, path):
+    def load_pdf(self, path: str) -> None:
         self._logger.info('Load pdf {} ...'.format(path))
         self._pdf = QmlPdf(path)
         self._logger.info('Pdf loaded')

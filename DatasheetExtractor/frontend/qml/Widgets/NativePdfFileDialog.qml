@@ -23,7 +23,8 @@ import QtQuick.Controls 2.4
 // import Qt.labs.platform 1.1
 import QtQuick.Dialogs
 
-FolderDialog {
+// Fixme: vs NativeFiledialog
+FileDialog {
 
     /******************************************************
      *
@@ -32,11 +33,12 @@ FolderDialog {
      */
 
     function selected_path() {
-        return folder
+        return currentFile
     }
 
     /******************************************************/
 
     id: root
-    options: FolderDialog.ShowDirsOnly
+    fileMode : FileDialog.OpenFile
+    nameFilters: ["PDF files (*.pdf)"]
 }

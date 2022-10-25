@@ -303,6 +303,11 @@ class QmlPdfPage(QObject):
 
     ##############################################
 
+    def __del__(self):
+        self._logger.info('')
+
+    ##############################################
+
     def __repr__(self) -> str:
         return '{0} {1}'.format(self.__class__.__name__, self._page)
 
@@ -436,9 +441,8 @@ class QmlPdf(QObject):
         self._pdf = PdfDocument(path)
         self._metadata = QmlPdfMetadata(self._pdf)
         # We must prevent garbage collection
-        # self._pages = [QmlPdfPage(self, page) for page in self._pdf]
         self._pages = {}
-
+        
     ##############################################
 
     @Property(str, constant=True)
@@ -478,13 +482,11 @@ class QmlPdf(QObject):
     def _page(self, page_number: int) -> QmlPdfPage:
         self._logger.info(f"Retrieve page {page_number}")
         if page_number not in self._pages:
+            # Fixme: optimize when prev works
             self._logger.info(f"create {page_number}")
             page = self._pdf[page_number]
-            qml_page = QmlPdfPage(self, page)
-            self._pages[page_number] = qml_page
-            return qml_page
-        else:
-            return self._pages[page_number]
+            self._pages[page_number] = QmlPdfPage(self, page)
+        return self._pages[page_number]
 
     ##############################################
 
@@ -498,24 +500,17 @@ class QmlPdf(QObject):
 
     @Property(QmlPdfPage)
     def first_page(self) -> QmlPdfPage:
-        # try:
         return self._page(self._pdf.first_page_number)
-        # except IndexError:
-        #     return None
 
     @Property(QmlPdfPage)
     def last_page(self) -> QmlPdfPage:
-        # try:
         return self._page(self._pdf.last_page_number)
-        # except IndexError:
-        #     return None
 
     @Slot(int, result=QmlPdfPage)
     def page(self, page_number: int) -> QmlPdfPage:
         self._logger.info(f'page {page_number}')
-        # try:
         _ = self._page(page_number)
-        self._logger.info(f'before return {_}')
+        # Fixme: bug when prev, obj is returned null in QML
+        #  It means something is buggy when we get back a QmlPage
+        self._logger.info(f'before return {_} {id(_)}')
         return _
-        # except IndexError:
-        #     return None

@@ -56,7 +56,8 @@ ApplicationWindow {
 
     function load_pdf(path) {
         application.load_pdf(path)
-        stack_layout.set_thumbnail_page()
+        stack_layout.set_viewer_page()
+        page_viewer_page.page_viewer.first_page()
         show_message(qsTr('Loaded pdf at %1'.arg(path)))
     }
 
@@ -76,7 +77,7 @@ ApplicationWindow {
         application.show_message.connect(on_message)
         application.show_error.connect(on_error)
         application_window.showMaximized()
-        page_viewer_page.page_viewer.first_page()
+        application.pdf_at_startup.connect(load_pdf)
     }
 
     function on_message(message) {
@@ -114,8 +115,8 @@ ApplicationWindow {
     }
 
     // Widgets.PdfFolderDialog {
-    Widgets.NativePdfFolderDialog {
-        id: pdf_folder_dialog
+    Widgets.NativePdfFileDialog {
+        id: pdf_file_dialog
         onAccepted: load_pdf(selected_path())
     }
 
@@ -145,7 +146,7 @@ ApplicationWindow {
         id: menu_bar
         about_dialog: about_dialog
         // Binding loop detected for property
-        pdf_folder_dialog: pdf_folder_dialog
+        pdf_file_dialog: pdf_file_dialog
         // Binding loop detected for property
         options_dialog: options_dialog
     }
