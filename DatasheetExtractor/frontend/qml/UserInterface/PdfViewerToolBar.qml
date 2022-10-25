@@ -111,7 +111,7 @@ RowLayout {
         action: Action {
             shortcut: "Ctrl+L"
             // icon.source: "qrc:/icons/svg/rotate-left.svg"
-            icon.name: "rotate_left-black"
+            icon.name: "rotate-left-black"
             onTriggered: page_viewer.pageRotation -= 90
         }
     }
@@ -120,7 +120,7 @@ RowLayout {
         action: Action {
             shortcut: "Ctrl+R"
             // icon.source: "qrc:/icons/svg/rotate-right.svg"
-            icon.name: "rotate_right-black"
+            icon.name: "rotate-right-black"
             onTriggered: page_viewer.pageRotation += 90
         }
     }

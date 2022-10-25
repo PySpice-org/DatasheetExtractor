@@ -82,6 +82,15 @@
         <file>icons/material/36x36@2/crop-black.png</file>
         <!-- <file>icons/material/48x48@2/crop-black.png</file> -->
 
+        <!-- <file>icons/material/18x18/crop-square-black.png</file> -->
+        <!-- <file>icons/material/24x24/crop-square-black.png</file> -->
+        <file>icons/material/36x36/crop-square-black.png</file>
+        <!-- <file>icons/material/48x48/crop-square-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/crop-square-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/crop-square-black.png</file> -->
+        <file>icons/material/36x36@2/crop-square-black.png</file>
+        <!-- <file>icons/material/48x48@2/crop-square-black.png</file> -->
+
 
 	<!-- D -->
 
@@ -125,14 +134,14 @@
         <file>icons/material/36x36@2/first-page-black.png</file>
         <!-- <file>icons/material/48x48@2/first-page-black.png</file> -->
 
-        <!-- <file>icons/material/18x18/fit_screen-black.png</file> -->
-        <!-- <file>icons/material/24x24/fit_screen-black.png</file> -->
-        <file>icons/material/36x36/fit_screen-black.png</file>
-        <!-- <file>icons/material/48x48/fit_screen-black.png</file> -->
-        <!-- <file>icons/material/18x18@2/fit_screen-black.png</file> -->
-        <!-- <file>icons/material/24x24@2/fit_screen-black.png</file> -->
-        <file>icons/material/36x36@2/fit_screen-black.png</file>
-        <!-- <file>icons/material/48x48@2/fit_screen-black.png</file> -->
+        <!-- <file>icons/material/18x18/fit-screen-black.png</file> -->
+        <!-- <file>icons/material/24x24/fit-screen-black.png</file> -->
+        <file>icons/material/36x36/fit-screen-black.png</file>
+        <!-- <file>icons/material/48x48/fit-screen-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/fit-screen-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/fit-screen-black.png</file> -->
+        <file>icons/material/36x36@2/fit-screen-black.png</file>
+        <!-- <file>icons/material/48x48@2/fit-screen-black.png</file> -->
 
 	<file>icons/material/36x36/flip-from-page.png</file>
 	<file>icons/material/36x36@2/flip-from-page.png</file>
@@ -244,14 +253,23 @@
         <file>icons/material/36x36@2/pageview-black.png</file>
         <!-- <file>icons/material/48x48@2/pageview-black.png</file> -->
 
-        <!-- <file>icons/material/18x18/picture_as_pdf-black.png</file> -->
-        <!-- <file>icons/material/24x24/picture_as_pdf-black.png</file> -->
-        <file>icons/material/36x36/picture_as_pdf-black.png</file>
-        <!-- <file>icons/material/48x48/picture_as_pdf-black.png</file> -->
-        <!-- <file>icons/material/18x18@2/picture_as_pdf-black.png</file> -->
-        <!-- <file>icons/material/24x24@2/picture_as_pdf-black.png</file> -->
-        <file>icons/material/36x36@2/picture_as_pdf-black.png</file>
-        <!-- <file>icons/material/48x48@2/picture_as_pdf-black.png</file> -->
+        <!-- <file>icons/material/18x18/photo-library-black.png</file> -->
+        <!-- <file>icons/material/24x24/photo-library-black.png</file> -->
+        <file>icons/material/36x36/photo-library-black.png</file>
+        <!-- <file>icons/material/48x48/photo-library-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/photo-library-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/photo-library-black.png</file> -->
+        <file>icons/material/36x36@2/photo-library-black.png</file>
+        <!-- <file>icons/material/48x48@2/photo-library-black.png</file> -->
+
+        <!-- <file>icons/material/18x18/picture-as-pdf-black.png</file> -->
+        <!-- <file>icons/material/24x24/picture-as-pdf-black.png</file> -->
+        <file>icons/material/36x36/picture-as-pdf-black.png</file>
+        <!-- <file>icons/material/48x48/picture-as-pdf-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/picture-as-pdf-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/picture-as-pdf-black.png</file> -->
+        <file>icons/material/36x36@2/picture-as-pdf-black.png</file>
+        <!-- <file>icons/material/48x48@2/picture-as-pdf-black.png</file> -->
 
 
 	<!-- Q -->
@@ -288,23 +306,23 @@
         <file>icons/material/36x36@2/restore-page-black.png</file>
         <!-- <file>icons/material/48x48@2/restore-page-black.png</file> -->
 
-        <!-- <file>icons/material/18x18/rotate_left-black.png</file> -->
-        <!-- <file>icons/material/24x24/rotate_left-black.png</file> -->
-        <file>icons/material/36x36/rotate_left-black.png</file>
-        <!-- <file>icons/material/48x48/rotate_left-black.png</file> -->
-        <!-- <file>icons/material/18x18@2/rotate_left-black.png</file> -->
-        <!-- <file>icons/material/24x24@2/rotate_left-black.png</file> -->
-        <file>icons/material/36x36@2/rotate_left-black.png</file>
-        <!-- <file>icons/material/48x48@2/rotate_left-black.png</file> -->
+        <!-- <file>icons/material/18x18/rotate-left-black.png</file> -->
+        <!-- <file>icons/material/24x24/rotate-left-black.png</file> -->
+        <file>icons/material/36x36/rotate-left-black.png</file>
+        <!-- <file>icons/material/48x48/rotate-left-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/rotate-left-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/rotate-left-black.png</file> -->
+        <file>icons/material/36x36@2/rotate-left-black.png</file>
+        <!-- <file>icons/material/48x48@2/rotate-left-black.png</file> -->
 
-        <!-- <file>icons/material/18x18/rotate_right-black.png</file> -->
-        <!-- <file>icons/material/24x24/rotate_right-black.png</file> -->
-        <file>icons/material/36x36/rotate_right-black.png</file>
-        <!-- <file>icons/material/48x48/rotate_right-black.png</file> -->
-        <!-- <file>icons/material/18x18@2/rotate_right-black.png</file> -->
-        <!-- <file>icons/material/24x24@2/rotate_right-black.png</file> -->
-        <file>icons/material/36x36@2/rotate_right-black.png</file>
-        <!-- <file>icons/material/48x48@2/rotate_right-black.png</file> -->
+        <!-- <file>icons/material/18x18/rotate-right-black.png</file> -->
+        <!-- <file>icons/material/24x24/rotate-right-black.png</file> -->
+        <file>icons/material/36x36/rotate-right-black.png</file>
+        <!-- <file>icons/material/48x48/rotate-right-black.png</file> -->
+        <!-- <file>icons/material/18x18@2/rotate-right-black.png</file> -->
+        <!-- <file>icons/material/24x24@2/rotate-right-black.png</file> -->
+        <file>icons/material/36x36@2/rotate-right-black.png</file>
+        <!-- <file>icons/material/48x48@2/rotate-right-black.png</file> -->
 
 	<!-- S -->
 	<!-- <file>icons/material/18x18/save-black.png</file> -->
@@ -343,7 +361,6 @@
         <file>icons/material/36x36@2/settings-overscan-black.png</file>
         <!-- <file>icons/material/48x48@2/settings-overscan-black.png</file> -->
 
-	<!-- import_contacts -->
         <!-- <file>icons/material/18x18/side-by-side-page-black.png</file> -->
         <!-- <file>icons/material/24x24/side-by-side-page-black.png</file> -->
         <file>icons/material/36x36/side-by-side-page-black.png</file>

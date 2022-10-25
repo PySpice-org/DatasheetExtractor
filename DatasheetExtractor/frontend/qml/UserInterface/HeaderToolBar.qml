@@ -70,16 +70,21 @@ ToolBar {
             */
 
             Widgets.ToolButtonTip {
-                // icon.name: 'image-black'
-                icon.name: 'pageview-black'
+                icon.name: 'photo-library-black'
                 tip: qsTr('Show page viewer')
                 onClicked: stack_layout.set_viewer_page()
             }
 
             Widgets.ToolButtonTip {
-                icon.name: 'picture_as_pdf-black'
+                icon.name: 'picture-as-pdf-black'
                 tip: qsTr('Show PDF viewer')
                 onClicked: stack_layout.set_pdf_viewer_page()
+            }
+
+            Widgets.ToolButtonTip {
+                icon.name: 'image-black'
+                tip: qsTr('Show page processing')
+                // onClicked: stack_layout.set_pdf_viewer_page()
             }
         }
 
