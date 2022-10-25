@@ -18,24 +18,28 @@
 #
 ####################################################################################################
 
-# http://www.pyinvoke.org
+####################################################################################################
+
+from pathlib import Path
+
+from invoke import task
 
 ####################################################################################################
 
-from invoke import task, Collection
-# import sys
+SOURCE_PATH = Path(__file__).absolute().parents[1]
+RCC_PATH = SOURCE_PATH.joinpath('DatasheetExtractor', 'frontend', 'rcc')
 
 ####################################################################################################
 
-# SOURCE_PATH = Path(__file__).resolve().parent
+@task
+def clean(ctx):   # noqa:
+    for _ in (
+            'application.rcc',
+            'resources.py',
+    ):
+        RCC_PATH.joinpath(_).unlink()
 
-####################################################################################################
-
-from . import clean
-from . import doc
-from . import qt
-
-ns = Collection()
-ns.add_collection(Collection.from_module(clean))
-ns.add_collection(Collection.from_module(doc))
-ns.add_collection(Collection.from_module(qt))
+@task
+def rcc(ctx):   # noqa:
+    with ctx.cd(RCC_PATH):
+        ctx.run('pyside6-rcc application.qrc -o resources.py')

@@ -1,4 +1,3 @@
-
 ####################################################################################################
 #
 # DatasheetExtractor - A Python library to extract data from datasheet

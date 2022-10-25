@@ -62,7 +62,7 @@ from .QmlPdf import QmlPdf, QmlPdfPage, QmlPdfMetadata, PageImageProvider
 # from .QmlPdfLibrary import QmlPdfCover, QmlPdfLibrary
 # from .Runnable import Worker
 
-from .rcc import Ressource
+from .rcc import resources
 
 ####################################################################################################
 
