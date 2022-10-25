@@ -34,15 +34,17 @@ ICONS_PATH = SOURCE_PATH.joinpath('DatasheetExtractor', 'frontend', 'rcc', 'icon
 ####################################################################################################
 
 @task
-def fetch_icon(ctx, src_name, dst_name, style='baseline', color='white'):
+def fetch_icon(ctx, src_name, dst_name, style='baseline', color='black', version=12):
      # style: [baseline], outline, round, twotone, sharp
      # color: [black], white
     theme = 'material'
     print('Icons path:', ICONS_PATH, theme)
+    print(f'{src_name} -> {dst_name}   style={style} color={color} version={version}')
     fetcher = MaterialIconFetcher(ICONS_PATH, theme)
     fetcher.fetch_icon(
         src_name,
         dst_name or src_name.replace('_', '-'),
         style,
         color,
+        version
     )

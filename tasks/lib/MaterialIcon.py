@@ -57,7 +57,7 @@ urllib3.disable_warnings()
 
 class MaterialIconFetcher:
 
-    BASE_URL = 'https://material.io/tools/icons/static/icons/'
+    BASE_URL = 'https://fonts.gstatic.com/s/i/materialicons'
 
     SCALE = (1, 2)
     DP = (18, 24, 36, 48)
@@ -90,18 +90,20 @@ class MaterialIconFetcher:
 
     ##############################################
 
-    def _fetch_png_icon(self, **kwargs: dict) -> list[str, bytes]:
-        # https://material.io/tools/icons/static/icons/baseline-save-black-36.zip
-        url_pattern = '{style}-{name}-{color}-{dp}.zip'
-        filename = url_pattern.format(**kwargs)
-        url = self.BASE_URL + filename
+    def _fetch_png_icon(self, name: str, color: str, dp: int, version: int) -> list[str, bytes]:
+        # https://fonts.gstatic.com/s/i/materialicons/picture_as_pdf/v12/24px.svg
+        # https://fonts.gstatic.com/s/i/materialicons/picture_as_pdf/v12/black-24dp.zip
+        #   2x/baseline_picture_as_pdf_black_24dp.png
+        #   1x/baseline_picture_as_pdf_black_24dp.png
+        filename = f'{color}-{dp}dp.zip'
+        url = f'{self.BASE_URL}/{name}/v{version}/{filename}'
         data = self._fetch_ressource(url)
         return filename, data
 
     ##############################################
 
-    def _extract_png_archive(self, **kwargs: dict) -> None:
-        filename, data = self._fetch_png_icon(**kwargs)
+    def _extract_png_archive(self, name: str, color: str, dp: int, version: int) -> None:
+        filename, data = self._fetch_png_icon(name=name, color=color, dp=dp, version=version)
         zip_path = self._tmp_directory_path.joinpath(filename)
         with open(zip_path, 'wb') as fh:
             fh.write(data)
@@ -110,34 +112,27 @@ class MaterialIconFetcher:
 
     ##############################################
 
-    def fetch_icon(self, src_name: str, dst_name: str, style: str, color: str) -> None:
-        kwargs = dict(src_name=src_name, dst_name=dst_name, style=style, color=color)
-
+    def fetch_icon(self, src_name: str, dst_name: str, style: str, color: str, version: int) -> None:
         for dp in self.DP:
-            self._extract_png_archive(name=src_name, dp=dp, **kwargs)
+            self._extract_png_archive(name=src_name, dp=dp, color=color, version=version)
 
         print()
         for scale in self.SCALE:
             for dp in self.DP:
-                dst_kwargs = dict(kwargs)
-                dst_kwargs.update(dict(scale=scale, dp=dp))
-
                 # 1x/baseline_save_black_18dp.png
-                filename_pattern = '{style}_{src_name}_{color}_{dp}dp.png'
                 src_path = self._tmp_directory_path.joinpath(
-                    '{scale}x'.format(**dst_kwargs),
-                    filename_pattern.format(**dst_kwargs),
+                    f'{scale}x',
+                    f'{style}_{src_name}_{color}_{dp}dp.png'
                 )
 
                 if scale > 1:
-                    size_directory = '{dp}x{dp}@{scale}'.format(**dst_kwargs)
+                    size_directory = f'{dp}x{dp}@{scale}'
                 else:
-                    size_directory = '{dp}x{dp}'.format(**dst_kwargs)
+                    size_directory = f'{dp}x{dp}'
                 size_path = self._theme_path.joinpath(size_directory)
                 if not size_path.exists():
                     os.mkdir(size_path)
-                filename_pattern = '{dst_name}-{color}.png'
-                filename = filename_pattern.format(**dst_kwargs)
+                filename = f'{dst_name}-{color}.png'
                 dst_path = size_path.joinpath(filename)
 
                 # print('Copy', src_path, dst_path)
