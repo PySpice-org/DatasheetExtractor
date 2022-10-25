@@ -56,9 +56,13 @@ ApplicationWindow {
 
     function load_pdf(path) {
         application.load_pdf(path)
-        stack_layout.set_viewer_page()
-        page_viewer_page.page_viewer.first_page()
-        show_message(qsTr('Loaded pdf at %1'.arg(path)))
+        show_message(qsTr('Loaded PDF %1'.arg(path)))
+        
+        // stack_layout.set_viewer_page()
+        // page_viewer_page.page_viewer.first_page()
+
+        stack_layout.set_pdf_viewer_page()
+        pdf_viewer_page.pdf_path = path
     }
 
     /*******************************************************
@@ -184,6 +188,7 @@ ApplicationWindow {
         function set_metadata_page() { currentIndex = 1 }
         function set_thumbnail_page() { currentIndex = 2 }
         function set_viewer_page() { currentIndex = 3 }
+        function set_pdf_viewer_page() { currentIndex = 4 }
 
         Component.onCompleted: {
             /*
@@ -192,7 +197,8 @@ ApplicationWindow {
             else
                 set_thumbnail_page()
             */
-            set_viewer_page()
+            // set_viewer_page()
+            // set_pdf_viewer_page()
         }
 
         // Ui.LibraryPage {
@@ -213,6 +219,10 @@ ApplicationWindow {
 
         Ui.PageViewerPage {
             id: page_viewer_page
+        }
+
+        Ui.PdfViewerPage {
+            id: pdf_viewer_page
         }
     }
 
