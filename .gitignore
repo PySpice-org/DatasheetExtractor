@@ -4,7 +4,7 @@ __pycache__
 nogit
 __TRASH__
 
-DatasheetExtractor/frontend/rcc/Ressource.py
+DatasheetExtractor/frontend/rcc/resources.py
 DatasheetExtractor/frontend/rcc/application.rcc
 
 mamba-dist/
@@ -30,3 +30,9 @@ DatasheetExtractor/frontend/rcc/icons/svg/verso-page.svg
 
 dev/label.png
 dev/p17.png
+
+devices/11042684mxg.jpg
+devices/15618922d2260bf8a03fc227d573eda71d373f5b.jpg
+o.txt
+page.png
+review.json
