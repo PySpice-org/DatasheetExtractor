@@ -19,7 +19,23 @@ applications:
  - High voltage DC/DC-converter and DC/AC-inverter
  - Induction heating resonant application
  - UPS-systems, welding and solar
-package: PG-DSO-8-59
+package:
+  name: PG-DSO-8-59
+  url: https://www.infineon.com/cms/en/product/packages/PG-DSO/PG-DSO-8-59
+  datasheet:
+    footprint: https://www.infineon.com/dgdl/Infineon-PG-DSO-8-59_PDF-Footprint-v01_00-EN.pdf?fileId=5546d4626f229553016f7a5584bf60b6
+    package: https://www.infineon.com/dgdl/Infineon-PG-DSO-8-59_PDF-Package-v01_00-EN.pdf?fileId=5546d4626f229553016f7a55bdab60bc
+    recommendation:  https://www.infineon.com/dgdl/Infineon-Board_Assembly_Recommendations-Gullwing-Package-v05_00-EN.pdf?fileId=5546d46275b79adb0175b7da356300e6
+  general information:
+    package material: PG
+    package family: DSO
+    terminals: 8
+    version: 59
+    exposed paddle: no
+    dimensions:
+      body length (mm): 7.6
+      body width (mm): 	6.4
+      min. terminal pitch (mm): 1.27
 product features:
   1EDC05I12AH:
     output current configuration: ±0.5 A
@@ -81,3 +97,7 @@ pcb implementation:
    maintained to increase the effective isolation and to reduce parasitic coupling.
  - In order to ensure low supply ripple and clean switching signals, bypass capacitor trace lengths
    should be kept as short as possible.
+glossary:
+  DSO: Dual Small Outline package
+  PG: Plastic Green
+  
