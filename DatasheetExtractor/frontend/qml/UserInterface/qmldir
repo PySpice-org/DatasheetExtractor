@@ -11,3 +11,4 @@ PageViewerPage 1.0 PageViewerPage.qml
 PageViewerToolBar 1.0 PageViewerToolBar.qml
 PdfViewerPage 1.0 PdfViewerPage.qml
 PdfViewerToolBar 1.0 PdfViewerToolBar.qml
+ProcessingPage 1.0 ProcessingPage.qml

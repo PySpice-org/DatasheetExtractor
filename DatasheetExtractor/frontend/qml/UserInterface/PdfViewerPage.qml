@@ -36,7 +36,7 @@ Page {
      *
      */
 
-    property alias doc: doc
+    property alias pdf_document: pdf_document
     property alias page_viewer: page_viewer
     property alias sidebar: sidebar
 
@@ -55,7 +55,7 @@ Page {
     /******************************************************/
   
     PdfDocument {
-        id: doc
+        id: pdf_document
         source: Qt.resolvedUrl(pdf_path)
         onPasswordRequired: password_dialog.open()
     }
@@ -64,7 +64,7 @@ Page {
         id: page_viewer  // was view
         anchors.fill: parent
         // anchors.leftMargin: sidebar.position * sidebar.width
-        document: doc
+        document: pdf_document
         // searchString: search_field.text // on footer
         // onCurrentPageChanged: current_page_spinbox.value = page_viewer.currentPage + 1
     }
@@ -117,21 +117,21 @@ Page {
                     spacing: 6
                     width: parent.width - 6
                     Label { font.bold: true; text: qsTr("Title") }
-                    InfoField { text: doc.title }
+                    InfoField { text: pdf_document.title }
                     Label { font.bold: true; text: qsTr("Author") }
-                    InfoField { text: doc.author }
+                    InfoField { text: pdf_document.author }
                     Label { font.bold: true; text: qsTr("Subject") }
-                    InfoField { text: doc.subject }
+                    InfoField { text: pdf_document.subject }
                     Label { font.bold: true; text: qsTr("Keywords") }
-                    InfoField { text: doc.keywords }
+                    InfoField { text: pdf_document.keywords }
                     Label { font.bold: true; text: qsTr("Producer") }
-                    InfoField { text: doc.producer }
+                    InfoField { text: pdf_document.producer }
                     Label { font.bold: true; text: qsTr("Creator") }
-                    InfoField { text: doc.creator }
+                    InfoField { text: pdf_document.creator }
                     Label { font.bold: true; text: qsTr("Creation date") }
-                    InfoField { text: doc.creationDate }
+                    InfoField { text: pdf_document.creationDate }
                     Label { font.bold: true; text: qsTr("Modification date") }
-                    InfoField { text: doc.modificationDate }
+                    InfoField { text: pdf_document.modificationDate }
                 }
 
                 ListView {
@@ -189,7 +189,7 @@ Page {
                         onClicked: page_viewer.goToLocation(page, location, zoom)
                     }
                     model: PdfBookmarkModel {
-                        document: doc
+                        document: pdf_document
                     }
                     ScrollBar.vertical: ScrollBar { }
                 }
@@ -198,7 +198,7 @@ Page {
                     id: thumbnails_view
                     implicitWidth: parent.width
                     implicitHeight: parent.height
-                    model: doc.pageModel
+                    model: pdf_document.pageModel
                     cellWidth: width / 2
                     cellHeight: cellWidth + 10
                     delegate: Item {
@@ -215,7 +215,7 @@ Page {
                             y: (parent.height - height - page_number.height) / 2
                             PdfPageImage {
                                 id: image
-                                document: doc
+                                document: pdf_document
                                 currentFrame: index
                                 asynchronous: true
                                 fillMode: Image.PreserveAspectFit

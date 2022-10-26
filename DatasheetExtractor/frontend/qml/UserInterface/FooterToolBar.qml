@@ -114,11 +114,11 @@ ToolBar {
 
         Label {
             id: status_label
-            property size implicitPointSize: doc.pagePointSize(view.currentPage)
-            text: "page " + (currentPageSB.value) + " of " + doc.pageCount +
+            property size implicitPointSize: pdf_document.pagePointSize(view.currentPage)
+            text: "page " + (currentPageSB.value) + " of " + pdf_document.pageCount +
                 " scale " + view.renderScale.toFixed(2) +
                 " original " + implicitPointSize.width.toFixed(1) + "x" + implicitPointSize.height.toFixed(1) + " pt"
-            visible: doc.pageCount > 0
+            visible: pdf_document.pageCount > 0
         }
         */
     }

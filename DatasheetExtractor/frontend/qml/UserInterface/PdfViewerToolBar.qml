@@ -38,7 +38,7 @@ RowLayout {
 
     property var actions
     property var pdf_viewer_page
-    property var doc
+    property var pdf_document
     property var page_viewer
 
     /******************************************************/
@@ -153,7 +153,7 @@ RowLayout {
     SpinBox {
         id: current_page_spinbox
         from: 1
-        to: doc.pageCount
+        to: pdf_document.pageCount
         editable: true
         onValueModified: page_viewer.goToPage(value - 1)
         // Cannot create Shortcut
@@ -176,7 +176,7 @@ RowLayout {
     }
 
     Label {
-        text: '/' + doc.pageCount
+        text: '/' + pdf_document.pageCount
     }
 
     /*

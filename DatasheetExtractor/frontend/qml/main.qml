@@ -122,17 +122,17 @@ ApplicationWindow {
 
         /*
         id: errorDialog
-        title: "Error loading " + doc.source
+        title: "Error loading " + pdf_document.source
         standardButtons: Dialog.Close
         modal: true
         closePolicy: Popup.CloseOnEscape
         anchors.centerIn: parent
         width: 300
-        visible: doc.status === PdfDocument.Error
+        visible: pdf_document.status === PdfDocument.Error
 
         contentItem: Label {
             id: errorField
-            text: doc.error
+            text: pdf_document.error
         }
         */
     }
@@ -164,7 +164,7 @@ ApplicationWindow {
             onAccepted: passwordDialog.accept()
         }
         onOpened: passwordField.forceActiveFocus()
-        onAccepted: doc.password = passwordField.text
+        onAccepted: pdf_document.password = passwordField.text
     }
 
     /*******************************************************
@@ -248,15 +248,10 @@ ApplicationWindow {
         function set_thumbnail_page() { currentIndex = 2 }
         function set_viewer_page() { currentIndex = 3 }
         function set_pdf_viewer_page() { currentIndex = 4 }
+        function set_processing_page() { currentIndex = 5 }
 
         Component.onCompleted: {
             pdf_viewer_page.sidebar.y = menu_bar.height + header_tool_bar.height
-            /*
-            if (application.library)
-                set_library_page()
-            else
-                set_thumbnail_page()
-            */
             // set_viewer_page()
             // set_pdf_viewer_page()
         }
@@ -274,7 +269,6 @@ ApplicationWindow {
         // Ui.ThumbnailPage {
         Item {
             id: thumbnail_page
-            // page_viewer: page_viewer_page.page_viewer
         }
 
         Ui.PageViewerPage {
@@ -285,6 +279,12 @@ ApplicationWindow {
             id: pdf_viewer_page
             application_window: application_window
             password_dialog: password_dialog
+        }
+
+        Ui.ProcessingPage {
+            id: processing_page
+            application_window: application_window
+            pdf_document: pdf_viewer_page.pdf_document
         }
     }
 
