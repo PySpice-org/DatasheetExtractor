@@ -28,14 +28,13 @@ __all__ = ['Worker']
 ####################################################################################################
 
 import logging
+# import sys
 import traceback
+from typing import Callable
 
 ####################################################################################################
 
-from qtpy.QtCore import (
-    QRunnable,
-    Signal, Slot, QObject
-)
+from qtpy.QtCore import QRunnable, Signal, Slot, QObject
 
 ####################################################################################################
 
@@ -78,8 +77,8 @@ class Worker(QRunnable):
 
     .. note:: non-GIL-releasing Python code can only execute in one thread at a time.
 
-    :param callback: The function callback to run on this worker thread. Supplied args and
-                     kwargs will be passed through to the runner.
+    :param callback: The function callback to run on this worker thread.
+                     Supplied args and kwargs will be passed through to the runner.
     :type callback: function
     :param args: Arguments to pass to the callback function
     :param kwargs: Keywords to pass to the callback function
@@ -90,7 +89,7 @@ class Worker(QRunnable):
 
     ##############################################
 
-    def __init__(self, callback, *args: list, **kwargs: dict) -> None:
+    def __init__(self, callback: Callable, *args: list, **kwargs: dict) -> None:
         super().__init__()
         self._callback = callback
         self._args = args
@@ -107,21 +106,21 @@ class Worker(QRunnable):
 
     @Slot()
     def run(self) -> None:
-        self._logger.info('run {}({}, {})'.format(self._callback, self._args, self._kwargs))
+        self._logger.info(f'run {self._callback}({self._args}, {self._kwargs})')
         try:
             result = self._callback(
                 *self._args, **self._kwargs,
                 # status=self._signals.status,
                 # progress=self._signals.progress,
             )
-        except:
+        except Exception:
             traceback.print_exc()
             # exctype, value = sys.exc_info()[:2]
             self._logger.info('emit error')
-            # Fixme:
-            self._signals.error.emit((exctype, value, traceback.format_exc()))
+            # Fixme: (exctype, value, traceback.format_exc())
+            self._signals.error.emit()
         else:
-            self._logger.info('emit result {}'.format(result))
+            self._logger.info(f'emit result {result}')
             self._signals.result.emit(result)
         finally:
             self._logger.info('emit finished')

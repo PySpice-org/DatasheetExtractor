@@ -60,7 +60,7 @@ from .ApplicationSettings import ApplicationSettings, Shortcut
 from .KeySequenceEditor import KeySequenceEditor
 from .QmlPdf import QmlPdf, QmlPdfPage, QmlPdfMetadata, PageImageProvider
 # from .QmlPdfLibrary import QmlPdfCover, QmlPdfLibrary
-# from .Runnable import Worker
+from .QmlTabulaExtractor import QmlTabulaExtractor
 
 from .rcc import resources
 
@@ -85,6 +85,7 @@ class QmlApplication(QObject):
     def __init__(self, application: 'Application') -> None:
         super().__init__()
         self._application = application
+        self._tabula_extractor = QmlTabulaExtractor()
 
     ##############################################
 
@@ -128,6 +129,12 @@ class QmlApplication(QObject):
         path = url.toString(QUrl.FormattingOptions(QUrl.RemoveScheme))
         self._application.load_pdf(path)
         self.pdf_changed.emit()
+
+    ##############################################
+
+    @Property(QmlTabulaExtractor, constant=True)
+    def tabula_extractor(self) -> QmlTabulaExtractor:
+        return self._application._tabula_extractor
 
 ####################################################################################################
 
@@ -192,8 +199,8 @@ class Application(QObject):
 
         # self._run_before_event_loop()
 
-        #! self._thread_pool = QtCore.QThreadPool()
-        #! self._logger.info("Multithreading with maximum {} threads".format(self._thread_pool.maxThreadCount()))
+        self._thread_pool = QtCore.QThreadPool()
+        self._logger.info("Multithreading with maximum {} threads".format(self._thread_pool.maxThreadCount()))
 
         self._page_image_provider = PageImageProvider()
         self._engine.addImageProvider('page_image', self._page_image_provider)
@@ -387,6 +394,7 @@ class Application(QObject):
         qmlRegisterUncreatableType(QmlPdf, 'DatasheetExtractor', 1, 0, 'QmlPdf', 'Cannot create QmlPdf')
         qmlRegisterUncreatableType(QmlPdfPage, 'DatasheetExtractor', 1, 0, 'QmlPdfPage', 'Cannot create QmlPdfPage')
         qmlRegisterUncreatableType(QmlPdfMetadata, 'DatasheetExtractor', 1, 0, 'QmlPdfMetadata', 'Cannot create QmlPdfMetadata')
+        qmlRegisterUncreatableType(QmlTabulaExtractor, 'DatasheetExtractor', 1, 0, 'QmlTabulaExtractor', 'Cannot create QmlTabulaExtractor')
 
     ##############################################
 
