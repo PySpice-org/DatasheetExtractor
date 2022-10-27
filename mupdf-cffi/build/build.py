@@ -18,6 +18,8 @@
 #
 ####################################################################################################
 
+# Compatible with MuPDF 1.12
+
 ####################################################################################################
 
 import os
@@ -73,7 +75,7 @@ else:
 
 mupdf_library_path = os.path.dirname(mupdf_library)
 mupdf_include_path = os.path.join(os.path.dirname(mupdf_library_path), 'include')
-freetype_include_path = '/usr/include/freetype2' # Fixme: Linux
+freetype_include_path = '/usr/include/freetype2'   # Fixme: Linux
 
 mupdf_version = None
 version_path = os.path.join(mupdf_include_path, 'mupdf', 'fitz', 'version.h')
