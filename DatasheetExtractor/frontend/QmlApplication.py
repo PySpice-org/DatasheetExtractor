@@ -35,6 +35,7 @@ __all__ = [
 from pathlib import Path
 import argparse
 import logging
+import os
 import sys
 import traceback
 
@@ -55,6 +56,7 @@ from qtpy.QtWidgets import QApplication
 # from DatasheetExtractor.Pdf import PdfLibrary
 from DatasheetExtractor.common.ArgparseAction import PathAction
 from DatasheetExtractor.common.platform import QtPlatform
+from DatasheetExtractor.config import ConfigInstall
 from .ApplicationMetadata import ApplicationMetadata
 from .ApplicationSettings import ApplicationSettings, Shortcut
 from .KeySequenceEditor import KeySequenceEditor
@@ -68,6 +70,11 @@ from .rcc import resources
 
 _module_logger = logging.getLogger(__name__)
 _module_logger.info('Qt binding is %s %s', qtpy.API_NAME, QtCore.__version__)
+
+def _make_module_url() -> list[Path]:
+    file_path = Path(__file__)
+    return [f'file://{_}/' for _ in [p.parents[1] for p in (file_path, file_path.resolve())]]
+_MODULE_URLS = _make_module_url()
 
 ####################################################################################################
 
@@ -261,24 +268,37 @@ class Application(QObject):
 
     def _message_handler(self, msg_type: QtCore.QtMsgType, context, msg) -> None:
         QtMsgType = QtCore.QtMsgType
-        if msg_type == QtMsgType.QtDebugMsg:
-            method = self._logger.debug
-        elif msg_type == QtMsgType.QtInfoMsg:
-            method = self._logger.info
-        elif msg_type == QtMsgType.QtWarningMsg:
-            method = self._logger.warning
-        elif msg_type in (QtMsgType.QtCriticalMsg, QtMsgType.QtFatalMsg):
-            method = self._logger.critical
-            # method = None
+        match msg_type:
+            case QtMsgType.QtDebugMsg:
+                method = self._logger.debug
+            case QtMsgType.QtInfoMsg:
+                method = self._logger.info
+            case QtMsgType.QtWarningMsg:
+                method = self._logger.warning
+            case QtMsgType.QtCriticalMsg | QtMsgType.QtFatalMsg:
+                method = self._logger.critical
+
+        msg = str(msg)
+        for _ in _MODULE_URLS:
+            msg = msg.replace(_, '')
 
         # local_msg = msg.toLocal8Bit()
         # localMsg.constData()
         context_file = context.file
         if context_file is not None:
-            file_path = Path(context_file).name
+            path = Path(context_file)
+            file_path = path.name
+            # is_qml = path.suffix == '.qml'
         else:
             file_path = ''
-        message = '{1} {3} — {0}'.format(msg, file_path, context.line, context.function)
+            # is_qml = False
+
+        sep = os.linesep + '  '
+        if file_path:
+            sep +='  '
+        function = f' / {context.function}' if context.function else ''
+        message = f'\033[1;34m{file_path}{function}\033[0m{sep}{msg}'   # context.line
+
         if method is not None:
             method(message)
         else:
