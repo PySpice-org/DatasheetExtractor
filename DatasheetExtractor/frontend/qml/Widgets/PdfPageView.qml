@@ -83,7 +83,10 @@ Page {
             currentFrame: application_window.header_tool_bar.pdf_viewer_toolbar.current_page_spinbox.value -1
 
             SelectionArea {
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.paintedWidth
+                height: parent.paintedHeight
             }
         }
     }

@@ -42,7 +42,15 @@ Item {
         selection_area.visible = true
     }
 
-    function bounds() {
+    function bounds_px() {
+        var x_inf = selection_area.x
+        var y_inf = selection_area.y
+        var x_sup = x_inf + selection_area.width
+        var y_sup = y_inf + selection_area.height
+        return {x_inf:x_inf, x_sup:x_sup, y_inf:y_inf, y_sup:y_sup}
+    }
+
+    function bounds_percent() {
         var x_inf = selection_area.x
         var y_inf = selection_area.y
         var x_sup = x_inf + selection_area.width
@@ -78,30 +86,40 @@ Item {
         property int margin: 60
         property int size_min: 100
 
+        property int start_x: 0
+        property int start_y: 0
         property int x_handler: 0
         property int y_handler: 0
         property bool edited: false
 
-        function get_handler(mouse) {
-            var x = mouse.x
-            var y = mouse.y
-            var x_inf = selection_area.x
-            var y_inf = selection_area.y
-            var x_sup = x_inf + selection_area.width
-            var y_sup = y_inf + selection_area.height
+        //  X   1  2  3
+        //  Y 1 ii xi si
+        //    2 ix xx sx
+        //    3 is xs ss
 
+        function get_handler(mouse) {
+            var bounds = bounds_px()
             var _x_handler, _y_handler
 
-            if (x < (x_inf + margin))
+            var x = mouse.x
+            var _x_handler // = 0
+            if (x < bounds.x_inf || x > bounds.x_sup)
+                _x_handler = 0
+            else if (x < (bounds.x_inf + margin))
                 _x_handler = 1
-            else if ((x_sup - margin) < x)
+            else if ((bounds.x_sup - margin) < x)
                 _x_handler = 3
             else
                 _x_handler = 2
 
-            if (y < (y_inf + margin))
+            // same code x -> y
+            var y = mouse.y
+            var _y_handler // = 0
+            if (y < bounds.y_inf || y > bounds.y_sup)
+                _y_handler = 0
+            else if (y < (bounds.y_inf + margin))
                 _y_handler = 1
-            else if ((y_sup - margin) < y)
+            else if ((bounds.y_sup - margin) < y)
                 _y_handler = 3
             else
                 _y_handler = 2
@@ -109,64 +127,70 @@ Item {
             return {x:_x_handler, y:_y_handler}
         }
 
-        function update_pointer(mouse) {
+        function is_handler(handler) {
+            return handler == 1 || handler == 3
+        }
+
+        function update_cursor_shape(mouse) {
             var handler = get_handler(mouse)
-            x_handler = handler.x
-            y_handler = handler.y
-            if (x_handler != 2 || y_handler != 2)
+            if (handler.x * handler.y == 4)
+                cursorShape = Qt.OpenHandCursor
+            else if ((handler.x * handler.y != 0) && (is_handler(handler.x) || is_handler(handler.y)))
                 cursorShape = Qt.CrossCursor
             else
-                cursorShape = Qt.ArrowCursor
+                cursorShape = Qt.ForbiddenCursor
         }
 
-        function start_selection_area(mouse) {
+        function start_edition(mouse) {
+            // Fixme: better js ?
             var handler = get_handler(mouse)
             x_handler = handler.x
             y_handler = handler.y
+            start_x = mouse.x
+            start_y = mouse.y
             edited = true
-            console.info('Handlers', x_handler, y_handler)
         }
 
-        function update_selection_area(mouse) {
-            var x = Math.min(Math.max(mouse.x, 0), pdf_page_image.paintedWidth)
-            var y = Math.min(Math.max(mouse.y, 0), pdf_page_image.paintedHeight)
+        function update_edition(mouse) {
+            var x = Math.min(Math.max(mouse.x, 0), width)
+            var y = Math.min(Math.max(mouse.y, 0), height)
             var x_inf = selection_area.x
             var y_inf = selection_area.y
 
-            //  X   1  2  3
-            //  Y 1 ii xi si
-            //    2 ix xx sx
-            //    3 is xs ss
+            if (x_handler*y_handler == 4) {
+                selection_area.x += mouse.x - start_x
+                selection_area.y += mouse.y - start_y
+                start_x = mouse.x
+                start_y = mouse.y
+            } else {
+                if (x_handler == 1) {
+                    selection_area.width -= x - x_inf
+                    // prevent null area, else area is moved
+                    if (selection_area.width > size_min)
+                        selection_area.x = x
+                } else if (x_handler == 3)
+                    selection_area.width = x - x_inf
+                selection_area.width = Math.max(selection_area.width, size_min)
 
-            // console.info(x_handler, y_handler, x, y)
-            if (x_handler == 1) {
-                selection_area.width -= x - x_inf
-                // prevent null area, else area is moved
-                if (selection_area.width > size_min)
-                    selection_area.x = x
-            } else if (x_handler == 3)
-                selection_area.width = x - x_inf
-            selection_area.width = Math.max(selection_area.width, size_min)
-
-            if (y_handler == 1) {
-                selection_area.height -= y - y_inf
-                if (selection_area.height > size_min)
-                    selection_area.y = y
-            } else if (y_handler == 3)
-                selection_area.height = y - y_inf
-            selection_area.height = Math.max(selection_area.height, size_min)
+                // same code x -> y
+                if (y_handler == 1) {
+                    selection_area.height -= y - y_inf
+                    if (selection_area.height > size_min)
+                        selection_area.y = y
+                } else if (y_handler == 3)
+                    selection_area.height = y - y_inf
+                selection_area.height = Math.max(selection_area.height, size_min)
+            }
         }
 
-        function stop_selection_area(mouse) {
-            x_handler = 0
-            y_handler = 0
-            dirty_selection_area = true
+        function stop_edition(mouse) {
             edited = false
+            cursorShape = Qt.ArrowCursor
         }
 
         onPressed: {
             if (selection_area.visible)
-                start_selection_area(mouse)
+                start_edition(mouse)
             else {
                 selection_area.x = mouse.x
                 selection_area.y = mouse.y
@@ -176,24 +200,24 @@ Item {
 
         onPositionChanged: {
             if (selection_area.first_time) {
-                selection_area.width = mouse.x - selection_area.x
+                selection_area.width  = mouse.x - selection_area.x
                 selection_area.height = mouse.y - selection_area.y
                 selection_area.visible = true
             } else if (selection_area.visible) {
                 if (edited)
-                    update_selection_area(mouse)
+                    update_edition(mouse)
                 else
-                    update_pointer(mouse)
+                    update_cursor_shape(mouse)
             }
         }
 
         onReleased: {
             if (selection_area.first_time) {
-                selection_area.width = mouse.x - selection_area.x
+                selection_area.width  = mouse.x - selection_area.x
                 selection_area.height = mouse.y - selection_area.y
                 selection_area.first_time = false
             } else if (selection_area.visible)
-                stop_selection_area(mouse)
+                stop_edition(mouse)
         }
     }
 }
