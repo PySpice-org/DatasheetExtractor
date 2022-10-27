@@ -243,48 +243,71 @@ ApplicationWindow {
         //     ViewerPage,
         // }
 
-        function set_library_page() { currentIndex = 0 }
-        function set_metadata_page() { currentIndex = 1 }
-        function set_thumbnail_page() { currentIndex = 2 }
-        function set_viewer_page() { currentIndex = 3 }
-        function set_pdf_viewer_page() { currentIndex = 4 }
-        function set_processing_page() { currentIndex = 5 }
+        property var page_map: ({}) // () for QML else it is undefined
+
+        function set_page(page_name) { currentIndex = page_map[page_name] }
+        function set_library_page() { currentIndex = page_map.library_page }
+        function set_metadata_page() { currentIndex = page_map.metadata_page }
+        function set_thumbnail_page() { currentIndex = page_map.thumbnail_page }
+        function set_viewer_page() { currentIndex = page_map.page_viewer_page }
+        function set_pdf_viewer_page() { currentIndex = page_map.pdf_viewer_page }
+        function set_processing_page() { currentIndex = page_map.processing_page }
+
+        function for_each_child(func) {
+            for (var i = 0; i < children.length; i++) {
+                func(i, children[i])
+            }
+        }
 
         Component.onCompleted: {
+            // fill page map
+            for_each_child((i, page) => {
+                page_map[page.id_name] = i
+            })
+
             pdf_viewer_page.sidebar.y = menu_bar.height + header_tool_bar.height
             // set_viewer_page()
             // set_pdf_viewer_page()
         }
 
-        // Ui.LibraryPage {
-        Item {
+        // Fixme: simplify with Page { Widget{} } ???
+
+        /*
+         Ui.LibraryPage {
             id: library_page
+            property string id_name: 'library_page'
         }
+        */
 
         Ui.MetadataPage {
             id: metadata_page
+            property string id_name: 'metadata_page'
         }
 
-        // Fixme: simplify with Page { Widget{} } ???
-        // Ui.ThumbnailPage {
-        Item {
+        /*
+        Ui.ThumbnailPage {
             id: thumbnail_page
+            property string id_name: 'thumbnail_page'
         }
+        */
 
         Ui.PageViewerPage {
             id: page_viewer_page
+            property string id_name: 'page_viewer_page'
         }
 
         Ui.PdfViewerPage {
             id: pdf_viewer_page
             application_window: application_window
             password_dialog: password_dialog
+            property string id_name: 'pdf_viewer_page'
         }
 
         Ui.ProcessingPage {
             id: processing_page
             application_window: application_window
             pdf_document: pdf_viewer_page.pdf_document
+            property string id_name: 'processing_page'
         }
     }
 
