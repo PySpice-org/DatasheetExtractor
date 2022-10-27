@@ -22,11 +22,10 @@
 
 // Fixme: lupdate
 pragma Singleton
-import QtQml 2.11
-import QtQuick 2.6
+import QtQml
+import QtQuick
 
 QtObject {
-
     property QtObject color: QtObject {
         // property color primary: darken('#428bca', 0.65)
         // property color success: '#5cb85c'

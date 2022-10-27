@@ -9,6 +9,7 @@ ImageViewer 1.0 ImageViewer.qml
 MarkdownViewer 1.0 MarkdownViewer.qml
 NativeFileDialog 1.0 NativeFileDialog.qml
 NativePdfFileDialog 1.0 NativePdfFileDialog.qml
+PdfPageView 1.0 PdfPageView.qml
 ShortcutRow 1.0 ShortcutRow.qml
 TextField 1.0 TextField.qml
 ToolButtonTip 1.0 ToolButtonTip.qml

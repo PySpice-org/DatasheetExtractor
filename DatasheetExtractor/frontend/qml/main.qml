@@ -298,16 +298,16 @@ ApplicationWindow {
 
         Ui.PdfViewerPage {
             id: pdf_viewer_page
+            property string id_name: 'pdf_viewer_page'
             application_window: application_window
             password_dialog: password_dialog
-            property string id_name: 'pdf_viewer_page'
         }
 
         Ui.ProcessingPage {
             id: processing_page
+            property string id_name: 'processing_page'
             application_window: application_window
             pdf_document: pdf_viewer_page.pdf_document
-            property string id_name: 'processing_page'
         }
     }
 

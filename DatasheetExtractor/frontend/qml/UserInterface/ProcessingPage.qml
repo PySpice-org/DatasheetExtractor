@@ -24,9 +24,11 @@ import QtQuick.Dialogs
 import QtQuick.Layouts
 import QtQuick.Pdf
 
-import DatasheetExtractor 1.0
-import Widgets 1.0 as Widgets
-import '.' 1.0 as Ui
+import DatasheetExtractor
+import Constants
+import Controls as Controls
+import Widgets as Widgets
+import '.' as Ui
 
 Page {
 
@@ -37,31 +39,7 @@ Page {
      */
 
     property var application_window
-    property var pdf_document
-
-    function hide_selection_area() {
-        selection_area.visible = false
-    }
-
-    function maximise_area() {
-        selection_area.x = 0
-        selection_area.y = 0
-        selection_area.width = pdf_page_image.paintedWidth
-        selection_area.height = pdf_page_image.paintedHeight
-        selection_area.visible = true
-    }
-
-    function bounds() {
-        var x_inf = selection_area.x
-        var y_inf = selection_area.y
-        var x_sup = x_inf + selection_area.width
-        var y_sup = y_inf + selection_area.height
-        x_inf /= pdf_page_image.paintedWidth
-        x_sup /= pdf_page_image.paintedWidth
-        y_inf /= pdf_page_image.paintedHeight
-        y_sup /= pdf_page_image.paintedHeight
-        return {x_inf:x_inf, x_sup:x_sup, y_inf:y_inf, y_sup:y_sup}
-    }
+    property alias pdf_document: page_view.pdf_document
 
     /******************************************************/
 
@@ -70,155 +48,117 @@ Page {
     Component.onCompleted: {
     }
 
-    Rectangle {
-        anchors.fill: parent
-        color: 'white'
+    ListModel {
+        id: modules
 
-        PdfPageImage {
-            id: pdf_page_image
-            // else image is centered
-            // anchors.fill: parent
-            anchors.margins: 10
-            fillMode: Image.PreserveAspectFit
-            document: pdf_document
-            currentFrame: application_window.header_tool_bar.pdf_viewer_toolbar.current_page_spinbox.value -1
+        ListElement {
+            title: qsTr('Tabula')
+            icon: ''
+            // source: 'qrc:/.qml'
+        }
 
-            Rectangle {
-                id: selection_area
-                visible: false
-                color: '#aaaaaaff'
-                x: 0
-                y: 0
-                width: 100
-                height: 100
-                property bool first_time: false
+        ListElement {
+            title: qsTr('Pinout')
+            icon: ''
+            // source: 'qrc:/.qml'
+        }
+    }
+
+    DelegateModel{
+        id: delegate_model
+
+        delegate: ItemDelegate {
+	    id: control // item_menu_delegate
+            width: parent.width
+            font.pixelSize: Style.font_size.large
+            text: model.title
+	    // Try to get a smaller spacing
+	    topPadding: 0
+	    bottomPadding: 0
+	    contentItem: Row {
+		spacing: Style.spacing.base_horizontal
+                /*
+ 		Image {
+		    anchors.verticalCenter: parent.verticalCenter
+		    source: model.icon
+		}
+                */
+		Label {
+		    text: control.text
+		    font: control.font
+		    anchors.verticalCenter: parent.verticalCenter
+		}
+	    }
+            onClicked: {}
+        }
+
+        model: modules
+
+        /*
+        groups: [
+            DelegateModelGroup {
+                includeByDefault: false
+                name: 'enabled'
             }
+        ]
+        filterOnGroup: 'enabled'
+        */
 
-            MouseArea {
-                id: mouse_area
+        // Component.onCompleted: {}
+    }
+
+    Row {
+        anchors.fill: parent
+
+        ListView {
+            id: list_view
+            // currentIndex: -1
+            width: parent.width * .2
+            height: parent.height
+	    spacing: 0
+            
+            model: delegate_model
+            ScrollIndicator.vertical: ScrollIndicator {}
+        }
+
+        Widgets.PdfPageView {
+            id: page_view
+            width: parent.width * .4
+            height: parent.height
+        }
+
+        Item {
+            id: processing_panel
+            width: parent.width * .4
+            height: parent.height
+
+            RowLayout{
+                id: row_layout
                 anchors.fill: parent
+                anchors.margins: 10
+                spacing: 10
 
-                hoverEnabled: true
-
-                property int margin: 60
-                property int size_min: 100
-
-                property int x_handler: 0
-                property int y_handler: 0
-                property bool edited: false
-
-                function get_handler(mouse) {
-                    var x = mouse.x
-                    var y = mouse.y
-                    var x_inf = selection_area.x
-                    var y_inf = selection_area.y
-                    var x_sup = x_inf + selection_area.width
-                    var y_sup = y_inf + selection_area.height
-
-                    var _x_handler, _y_handler
-
-                    if (x < (x_inf + margin))
-                        _x_handler = 1
-                    else if ((x_sup - margin) < x)
-                        _x_handler = 3
-                    else
-                        _x_handler = 2
-
-                    if (y < (y_inf + margin))
-                        _y_handler = 1
-                    else if ((y_sup - margin) < y)
-                        _y_handler = 3
-                    else
-                        _y_handler = 2
-
-                    return {x:_x_handler, y:_y_handler}
-                }
-
-                function update_pointer(mouse) {
-                    var handler = get_handler(mouse)
-                    x_handler = handler.x
-                    y_handler = handler.y
-                    if (x_handler != 2 || y_handler != 2)
-                        cursorShape = Qt.CrossCursor
-                    else
-                        cursorShape = Qt.ArrowCursor
-                }
-
-                function start_selection_area(mouse) {
-                    var handler = get_handler(mouse)
-                    x_handler = handler.x
-                    y_handler = handler.y
-                    edited = true
-                    console.info('Handlers', x_handler, y_handler)
-                }
-
-                function update_selection_area(mouse) {
-                    var x = Math.min(Math.max(mouse.x, 0), pdf_page_image.paintedWidth)
-                    var y = Math.min(Math.max(mouse.y, 0), pdf_page_image.paintedHeight)
-                    var x_inf = selection_area.x
-                    var y_inf = selection_area.y
-
-                    //  X   1  2  3
-                    //  Y 1 ii xi si
-                    //    2 ix xx sx
-                    //    3 is xs ss
-
-                    // console.info(x_handler, y_handler, x, y)
-                    if (x_handler == 1) {
-                        selection_area.width -= x - x_inf
-                        // prevent null area, else area is moved
-                        if (selection_area.width > size_min)
-                            selection_area.x = x
-                    } else if (x_handler == 3)
-                        selection_area.width = x - x_inf
-                    selection_area.width = Math.max(selection_area.width, size_min)
-
-                    if (y_handler == 1) {
-                        selection_area.height -= y - y_inf
-                        if (selection_area.height > size_min)
-                            selection_area.y = y
-                    } else if (y_handler == 3)
-                        selection_area.height = y - y_inf
-                    selection_area.height = Math.max(selection_area.height, size_min)
-                }
-
-                function stop_selection_area(mouse) {
-                    x_handler = 0
-                    y_handler = 0
-                    dirty_selection_area = true
-                    edited = false
-                }
-
-                onPressed: {
-                    if (selection_area.visible)
-                        start_selection_area(mouse)
-                    else {
-                        selection_area.x = mouse.x
-                        selection_area.y = mouse.y
-                        selection_area.first_time = true
+                ColumnLayout {
+                    id: column_layout
+                    Layout.alignment: Qt.AlignTop
+                    Layout.preferredWidth: row_layout.width / 3
+                    spacing: 20
+                    
+                    // Controls.CustomButton {
+                    Button {
+                        Layout.preferredHeight: 30
+                        Layout.preferredWidth: column_layout.width
+                        font.pixelSize: 20
+                        font.bold: true
+                        // color_label: 'white'
+                        // color_background: Style.color.success
+                        
+                        text: qsTr('Process')
+                        
+                        onClicked: {
+                            console.log('Start processing...')
+                        }
                     }
-                }
-
-                onPositionChanged: {
-                    if (selection_area.first_time) {
-                        selection_area.width = mouse.x - selection_area.x
-                        selection_area.height = mouse.y - selection_area.y
-                        selection_area.visible = true
-                    } else if (selection_area.visible) {
-                        if (edited)
-                            update_selection_area(mouse)
-                        else
-                            update_pointer(mouse)
-                    }
-                }
-
-                onReleased: {
-                    if (selection_area.first_time) {
-                        selection_area.width = mouse.x - selection_area.x
-                        selection_area.height = mouse.y - selection_area.y
-                        selection_area.first_time = false
-                    } else if (selection_area.visible)
-                        stop_selection_area(mouse)
                 }
             }
         }
