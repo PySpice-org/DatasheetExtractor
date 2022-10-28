@@ -37,10 +37,11 @@ ToolBar {
 
     property alias pdf_viewer_toolbar: pdf_viewer_toolbar
 
+    property var application_window
     property var actions
+    property var stack_layout
     property var page_viewer_page
     property var pdf_viewer_page
-    property var stack_layout
 
     /******************************************************/
 
@@ -105,6 +106,7 @@ ToolBar {
             // anchors.fill: parent
             // anchors.rightMargin: 6
 
+            application_window: root.application_window
             actions: root.actions
             pdf_viewer_page: root.pdf_viewer_page
             pdf_document: root.pdf_viewer_page.pdf_document

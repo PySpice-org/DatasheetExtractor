@@ -35,58 +35,103 @@ Page {
      *
      */
 
-    property var application_window
     property var pdf_document
+    property var page_number: 1
 
-    function hide_selection_area() {
-        selection_area.visible = false
-    }
-
-    function maximise_area() {
-        selection_area.x = 0
-        selection_area.y = 0
-        selection_area.width = pdf_page_image.paintedWidth
-        selection_area.height = pdf_page_image.paintedHeight
-        selection_area.visible = true
-    }
-
-    function bounds() {
-        var x_inf = selection_area.x
-        var y_inf = selection_area.y
-        var x_sup = x_inf + selection_area.width
-        var y_sup = y_inf + selection_area.height
-        x_inf /= pdf_page_image.paintedWidth
-        x_sup /= pdf_page_image.paintedWidth
-        y_inf /= pdf_page_image.paintedHeight
-        y_sup /= pdf_page_image.paintedHeight
-        return {x_inf:x_inf, x_sup:x_sup, y_inf:y_inf, y_sup:y_sup}
-    }
+    property alias selection_area: selection_area
 
     /******************************************************/
 
     id: root
 
-    Component.onCompleted: {
+    function format_pc(x) {
+        // x *= 100
+        return (x).toFixed(0)
     }
 
-    Rectangle {
+    function on_selection_area_changed() {
+        var bounds_px = selection_area.bounds_px()
+        var bounds_pc = selection_area.bounds_pc()
+        selection_area_px_label.text = '[%1, %2]x[%3, %4] px'
+            .arg(bounds_px.x_inf)
+            .arg(bounds_px.x_sup)
+            .arg(bounds_px.y_inf)
+            .arg(bounds_px.y_sup)
+        selection_area_pc_label.text = '[%1, %2]x[%3, %4] %'
+            .arg(format_pc(bounds_pc.x_inf))
+            .arg(format_pc(bounds_pc.x_sup))
+            .arg(format_pc(bounds_pc.y_inf))
+            .arg(format_pc(bounds_pc.y_sup))
+    }
+
+    Component.onCompleted: {
+        selection_area.changed.connect(on_selection_area_changed)
+    }
+
+    ColumnLayout {
         anchors.fill: parent
-        color: 'white'
+        anchors.margins: 10
+        spacing: 10
 
-        PdfPageImage {
-            id: pdf_page_image
-            // else image is centered
-            // anchors.fill: parent
-            anchors.margins: 10
-            fillMode: Image.PreserveAspectFit
-            document: pdf_document
-            currentFrame: application_window.header_tool_bar.pdf_viewer_toolbar.current_page_spinbox.value -1
+        RowLayout {
+            spacing: 10
 
-            SelectionArea {
+            Label {
+                text: 'Page:'
+            }
+            Label {
+                id: page_number_label
+                text: page_number
+            }
+        }
+
+        RowLayout {
+            spacing: 10
+
+            Label {
+                text: 'Selection area:'
+            }
+            Label {
+                id: selection_area_px_label
+            }
+            Label {
+                id: selection_area_pc_label
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: 'white'
+
+            // Fixme: show page border
+            // border can be cleared by image
+            Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
-                width: parent.paintedWidth
-                height: parent.paintedHeight
+                width: pdf_page_image.paintedWidth
+                height: pdf_page_image.paintedHeight
+                border.color: 'black'
+                border.width: 2
+            }
+
+            PdfPageImage {
+                id: pdf_page_image
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+                horizontalAlignment: Image.AlignLeft
+                verticalAlignment: Image.AlignTop
+                document: pdf_document
+                // Fixme:
+                currentFrame: page_number -1
+
+                SelectionArea {
+                    id: selection_area
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    width: parent.paintedWidth
+                    height: parent.paintedHeight
+                }
             }
         }
     }

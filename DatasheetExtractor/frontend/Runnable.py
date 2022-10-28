@@ -50,7 +50,7 @@ class WorkerSignals(QObject):
 
     Supported signals are:
 
-    finished
+    done
         No data
 
     error
@@ -64,7 +64,7 @@ class WorkerSignals(QObject):
 
     """
 
-    finished = Signal()
+    done = Signal()
     error = Signal(tuple)
     result = Signal(str)   # Fixme: object
     progress = Signal(int)
@@ -123,5 +123,5 @@ class Worker(QRunnable):
             self._logger.info(f'emit result {result}')
             self._signals.result.emit(result)
         finally:
-            self._logger.info('emit finished')
-            self._signals.finished.emit()
+            self._logger.info('emit done')
+            self._signals.done.emit()

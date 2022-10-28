@@ -113,7 +113,7 @@ T.Button {
         // }
 
         // radius: 2
-        radius: 10
+        radius: 5
         // border.color: Fusion.buttonOutline(control.palette, panel.highlighted || control.visualFocus, control.enabled)
 
         // Rectangle {

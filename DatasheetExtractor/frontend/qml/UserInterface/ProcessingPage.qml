@@ -31,6 +31,7 @@ import Widgets as Widgets
 import '.' as Ui
 
 Page {
+    id: root
 
     /*******************************************************
      *
@@ -41,11 +42,14 @@ Page {
     property var application_window
     property alias pdf_document: page_view.pdf_document
 
+    property int page_number: 1
+
     /******************************************************/
 
-    id: root
-
     Component.onCompleted: {
+        application_window.page_number_changed.connect((page_number) => {
+            root.page_number = page_number
+        })
     }
 
     ListModel {
@@ -116,7 +120,7 @@ Page {
             width: parent.width * .2
             height: parent.height
 	    spacing: 0
-            
+
             model: delegate_model
             ScrollIndicator.vertical: ScrollIndicator {}
         }
@@ -125,6 +129,7 @@ Page {
             id: page_view
             width: parent.width * .4
             height: parent.height
+            page_number: root.page_number
         }
 
         Item {
@@ -132,32 +137,80 @@ Page {
             width: parent.width * .4
             height: parent.height
 
-            RowLayout{
-                id: row_layout
+            function process_page() {
+                // Fixme:
+                var bounds_pc = page_view.selection_area.bounds_pc()
+                console.log('Start processing of page ', page_number)
+                busy_indicator.running = true
+                application.tabula_extractor.process_page_area(
+                    page_number,
+                    bounds_pc.y_inf,
+                    bounds_pc.x_inf,
+                    bounds_pc.y_sup,
+                    bounds_pc.x_sup,
+                    lattice_checkbox.checked,
+                )
+            }
+
+            function on_done() {
+                console.log('Tabula done')
+                busy_indicator.running = false
+                var csv = application.tabula_extractor.csv_table()
+                console.log('CSV ', csv)
+                textarea.text = csv
+            }
+
+            Component.onCompleted: {
+                application.tabula_extractor.done.connect(on_done)
+            }
+
+            ColumnLayout {
+                id: column_layout
                 anchors.fill: parent
                 anchors.margins: 10
                 spacing: 10
 
-                ColumnLayout {
-                    id: column_layout
-                    Layout.alignment: Qt.AlignTop
-                    Layout.preferredWidth: row_layout.width / 3
-                    spacing: 20
-                    
-                    // Controls.CustomButton {
-                    Button {
-                        Layout.preferredHeight: 30
-                        Layout.preferredWidth: column_layout.width
+                Label {
+                    font.pixelSize: 30
+                    text: "<b>Tabula Plugin</b>"
+                }
+
+                RowLayout {
+                    Controls.CustomButton {
+                        Layout.preferredHeight: 35
                         font.pixelSize: 20
                         font.bold: true
-                        // color_label: 'white'
-                        // color_background: Style.color.success
-                        
+                        color_label: 'white'
+                        color_background: Style.color.success
+
                         text: qsTr('Process')
-                        
-                        onClicked: {
-                            console.log('Start processing...')
-                        }
+
+                        onClicked: processing_panel.process_page()
+                    }
+
+                    BusyIndicator {
+                        id: busy_indicator
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        width: 128
+                        height: width
+                        running: false
+                    }
+                }
+
+                CheckBox {
+                    id: lattice_checkbox
+                    checked: false
+                    text: qsTr("Use ruling lines separating each cell")
+                }
+
+                ScrollView {
+                    id: view
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    TextArea {
+                        id: textarea
+                        // text: ''
                     }
                 }
             }

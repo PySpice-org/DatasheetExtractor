@@ -36,6 +36,7 @@ RowLayout {
 
     property alias current_page_spinbox: current_page_spinbox
 
+    property var application_window
     property var actions
     property var pdf_viewer_page
     property var pdf_document
@@ -56,7 +57,7 @@ RowLayout {
         }
     }
     */
-    
+
     Widgets.ToolButtonTip {
         action: Action {
             shortcut: StandardKey.ZoomIn
@@ -65,7 +66,7 @@ RowLayout {
             onTriggered: page_viewer.renderScale *= Math.sqrt(2)
         }
     }
-    
+
     Widgets.ToolButtonTip {
         action: Action {
             shortcut: StandardKey.ZoomOut
@@ -74,7 +75,7 @@ RowLayout {
             onTriggered: page_viewer.renderScale /= Math.sqrt(2)
         }
         // icon.name:
-        // onClicked: 
+        // onClicked:
     }
 
     Widgets.ToolButtonTip {
@@ -155,7 +156,7 @@ RowLayout {
         from: 1
         to: pdf_document.pageCount
         editable: true
-        onValueModified: page_viewer.goToPage(value - 1)
+
         // Cannot create Shortcut
         /*
         Shortcut {
@@ -168,9 +169,13 @@ RowLayout {
         }
         */
 
+        // only emitted when the spin box value has been interactively modified by the user
+        onValueModified: page_viewer.goToPage(value - 1)
+
         Component.onCompleted: {
-            page_viewer.onCurrentPageChanged.connect(() => {
-                current_page_spinbox.value = page_viewer.currentPage + 1
+            pdf_viewer_page.page_number_changed.connect((page_number) => {
+                console.log('page number spinbox onCurrentPageChanged', page_number)
+                current_page_spinbox.value = page_number
             })
         }
     }

@@ -64,17 +64,30 @@ class QmlTabulaExtractor(QObject):
 
     @path.setter
     def path(self, value: str) -> None:
-        self._path = value
+        self._path = str(value)
 
     ##############################################
 
+    # @Property(str)
+    @Slot(result=str)
+    def csv_table(self) -> str:
+        # return self._result[0].to_csv()
+        if self._result:
+            return self._result[0]
+        else:
+            return ''
+
+    ##############################################
+
+    # result = Signal(str)
     done = Signal()
 
     # Fixme: 'QList<int>' ok ?
-    @Slot(int, int, int, int, int, bool)
+    @Slot(int, float, float, float, float, bool)
     def process_page_area(
             self,
             page_number: int,
+            # guess: bool,
             top: float,
             left: float,
             bottom: float,
@@ -82,20 +95,23 @@ class QmlTabulaExtractor(QObject):
             lattice: bool = True,
             # to_csv: bool = False
     ) -> None:
+        self._logger.info(f'page {page_number} [{left:3.0f}, {right:3.0f}]x[{top:3.0f}, {bottom:3.0f}] lattice {lattice}')
         def job() -> None:
             _ = TabulaExtractor(self._path)
             data_frames = _.extract(
                 page_number=page_number,
                 guess=False,
-                lattice=lattice,
                 relative_area=(top, left, bottom, right),
+                scaled_by_100=True,
+                lattice=lattice,
+                to_csv=True,
             )
             self._result = data_frames
-            return ''
+            return f'{page_number}'
 
         worker = Worker(job)
-        # worker.signals.result.connect(self.print_output)
-        worker.signals.finished.connect(self.done)
+        # worker.signals.result.connect(self.result)
+        worker.signals.done.connect(self.done)
         # worker.signals.progress.connect(self.progress_fn)
 
         from .QmlApplication import Application

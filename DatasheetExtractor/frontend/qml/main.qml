@@ -40,6 +40,8 @@ ApplicationWindow {
 
     property var shortcuts: null
 
+    signal page_number_changed(int page_number)
+
     function close_application(close) {
         console.info('Close application')
         show_message(qsTr('Close ...'))
@@ -60,7 +62,7 @@ ApplicationWindow {
     function load_pdf(path) {
         application.load_pdf(path)
         show_message(qsTr('Loaded PDF %1'.arg(path)))
-        
+
         // stack_layout.set_viewer_page()
         // page_viewer_page.page_viewer.first_page()
 
@@ -81,9 +83,12 @@ ApplicationWindow {
     Component.onCompleted: {
         console.info('ApplicationWindow.onCompleted')
         console.info(application.pdf)
+
         application.show_message.connect(on_message)
         application.show_error.connect(on_error)
+
         application_window.showMaximized()
+
         application.pdf_at_startup.connect(load_pdf)
     }
 
@@ -222,6 +227,7 @@ ApplicationWindow {
     header: Ui.HeaderToolBar {
         id: header_tool_bar
         actions: actions
+        application_window: application_window
         page_viewer_page: page_viewer_page
         pdf_viewer_page: pdf_viewer_page
         stack_layout: stack_layout
@@ -301,6 +307,10 @@ ApplicationWindow {
             property string id_name: 'pdf_viewer_page'
             application_window: application_window
             password_dialog: password_dialog
+
+            Component.onCompleted: {
+                page_number_changed.connect(application_window.page_number_changed)
+            }
         }
 
         Ui.ProcessingPage {

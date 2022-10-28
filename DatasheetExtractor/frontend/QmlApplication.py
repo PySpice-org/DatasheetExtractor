@@ -133,15 +133,19 @@ class QmlApplication(QObject):
 
     @Slot('QUrl')
     def load_pdf(self, url: QUrl) -> None:
+        # Fixme: API ok ???
+        #   QML -> QmlApplication.load_pdf() -> Application.load_pdf -> emit pdf_changed
+        #   startup -> Application._post_init -> emit pdf_at_startup
         path = url.toString(QUrl.FormattingOptions(QUrl.RemoveScheme))
         self._application.load_pdf(path)
+        self._tabula_extractor.path = path
         self.pdf_changed.emit()
 
     ##############################################
 
     @Property(QmlTabulaExtractor, constant=True)
     def tabula_extractor(self) -> QmlTabulaExtractor:
-        return self._application._tabula_extractor
+        return self._tabula_extractor
 
 ####################################################################################################
 
@@ -236,9 +240,9 @@ class Application(QObject):
     def qml_application(self) -> QmlApplication:
         return self._qml_application
 
-    # @property
-    # def thread_pool(self):
-    #     return self._thread_pool
+    @property
+    def thread_pool(self):
+        return self._thread_pool
 
     @property
     def page_image_provider(self) -> PageImageProvider:
@@ -495,5 +499,6 @@ class Application(QObject):
 
     def load_pdf(self, path: str) -> None:
         self._logger.info('Load pdf {} ...'.format(path))
+        # Fixme: why create QmlPdf here
         self._pdf = QmlPdf(path)
         self._logger.info('Pdf loaded')

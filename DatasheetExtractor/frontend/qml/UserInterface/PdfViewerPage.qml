@@ -43,7 +43,9 @@ Page {
     property var application_window
     property var password_dialog
     property string pdf_path
-    
+
+    signal page_number_changed(int page_number)
+
     /******************************************************/
 
     id: root
@@ -53,7 +55,7 @@ Page {
     }
 
     /******************************************************/
-  
+
     PdfDocument {
         id: pdf_document
         source: Qt.resolvedUrl(pdf_path)
@@ -66,7 +68,11 @@ Page {
         // anchors.leftMargin: sidebar.position * sidebar.width
         document: pdf_document
         // searchString: search_field.text // on footer
-        // onCurrentPageChanged: current_page_spinbox.value = page_viewer.currentPage + 1
+        onCurrentPageChanged: {
+            var page_number = currentPage + 1
+            console.log('emit PdfViewerPage.page_number_changed', page_number)
+            page_number_changed(page_number)
+        }
     }
 
     Drawer {

@@ -23,12 +23,17 @@ import QtQuick
 import '.' 1.0 as Ui
 
 Item {
+    id: root
 
     /*******************************************************
      *
      * API
      *
      */
+
+    property bool selected: false
+
+    signal changed()
 
     function hide_selection_area() {
         selection_area.visible = false
@@ -37,34 +42,41 @@ Item {
     function maximise_area() {
         selection_area.x = 0
         selection_area.y = 0
-        selection_area.width = pdf_page_image.paintedWidth
-        selection_area.height = pdf_page_image.paintedHeight
+        selection_area.width = root.width
+        selection_area.height = root.height
         selection_area.visible = true
     }
 
     function bounds_px() {
-        var x_inf = selection_area.x
-        var y_inf = selection_area.y
-        var x_sup = x_inf + selection_area.width
-        var y_sup = y_inf + selection_area.height
+        var x_inf, x_sup, y_inf, y_sup
+        if (selection_area.visible) {
+            x_inf = selection_area.x
+            y_inf = selection_area.y
+            x_sup = x_inf + selection_area.width
+            y_sup = y_inf + selection_area.height
+        } else {
+            x_inf = 0
+            y_inf = 0
+            x_sup = mouse_area.width
+            y_sup = mouse_area.height
+        }
         return {x_inf:x_inf, x_sup:x_sup, y_inf:y_inf, y_sup:y_sup}
     }
 
-    function bounds_percent() {
-        var x_inf = selection_area.x
-        var y_inf = selection_area.y
-        var x_sup = x_inf + selection_area.width
-        var y_sup = y_inf + selection_area.height
-        x_inf /= pdf_page_image.paintedWidth
-        x_sup /= pdf_page_image.paintedWidth
-        y_inf /= pdf_page_image.paintedHeight
-        y_sup /= pdf_page_image.paintedHeight
-        return {x_inf:x_inf, x_sup:x_sup, y_inf:y_inf, y_sup:y_sup}
+    function bounds_pc() {
+        var bounds = bounds_px()
+        bounds.x_inf /= mouse_area.width
+        bounds.x_sup /= mouse_area.width
+        bounds.y_inf /= mouse_area.height
+        bounds.y_sup /= mouse_area.height
+        bounds.x_inf *= 100
+        bounds.x_sup *= 100
+        bounds.y_inf *= 100
+        bounds.y_sup *= 100
+        return bounds
     }
 
     /******************************************************/
-
-    id: root
 
     Rectangle {
         id: selection_area
@@ -188,7 +200,14 @@ Item {
             cursorShape = Qt.ArrowCursor
         }
 
-        onPressed: {
+        function update_size(mouse) {
+            var x = Math.min(Math.max(mouse.x, 0), width)
+            var y = Math.min(Math.max(mouse.y, 0), height)
+            selection_area.width  = x - selection_area.x
+            selection_area.height = y - selection_area.y
+        }
+
+        onPressed: (mouse) => {
             if (selection_area.visible)
                 start_edition(mouse)
             else {
@@ -198,10 +217,9 @@ Item {
             }
         }
 
-        onPositionChanged: {
+        onPositionChanged: (mouse) => {
             if (selection_area.first_time) {
-                selection_area.width  = mouse.x - selection_area.x
-                selection_area.height = mouse.y - selection_area.y
+                update_size(mouse)
                 selection_area.visible = true
             } else if (selection_area.visible) {
                 if (edited)
@@ -211,13 +229,14 @@ Item {
             }
         }
 
-        onReleased: {
+        onReleased: (mouse) => {
             if (selection_area.first_time) {
-                selection_area.width  = mouse.x - selection_area.x
-                selection_area.height = mouse.y - selection_area.y
+                update_size(mouse)
                 selection_area.first_time = false
             } else if (selection_area.visible)
                 stop_edition(mouse)
+            changed()
+            selected = true
         }
     }
 }
