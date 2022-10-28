@@ -12,14 +12,14 @@ df = tabula.read_pdf(
     pdf_path,
     output_format='dataframe',
     # output_format='json',
-    pages=10,
+    pages=1,
     guess=True,
     # guess=False,
     # top,left,bottom,right
     # area=[54,4,71,96],
     relative_area=True,
-    lattice=True,
-    # stream=True,
+    # lattice=True,
+    stream=True,
     # columns=,
     # format='CSV',
     # format='TSV',
@@ -29,4 +29,6 @@ df = tabula.read_pdf(
 df = df[0]
 print(type(df))
 print(df)
-print(df.to_csv())
+print('rows', len(df))
+print('columns', df.columns)
+# print(df.to_csv())

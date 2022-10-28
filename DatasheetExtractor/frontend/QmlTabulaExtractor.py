@@ -23,13 +23,15 @@ __all__ = ['QmlTabulaExtractor']
 ####################################################################################################
 
 # from pathlib import Path
+from typing import Any
 import logging
 
-from qtpy.QtCore import Property, Signal, Slot, QObject
+from qtpy.QtCore import Property, Signal, Slot, QObject, Qt, QAbstractTableModel, QModelIndex
 from qtpy.QtQml import QmlElement, QmlUncreatable
 
 from DatasheetExtractor.backend.extractor.tabula import TabulaExtractor
 from .Runnable import Worker
+from .PandasModel import PandasModel
 
 ####################################################################################################
 
@@ -71,11 +73,24 @@ class QmlTabulaExtractor(QObject):
     # @Property(str)
     @Slot(result=str)
     def csv_table(self) -> str:
-        # return self._result[0].to_csv()
         if self._result:
-            return self._result[0]
+            # return self._result[0]
+            return self._result[0].to_csv()
         else:
             return ''
+
+    ##############################################
+
+    table_changed = Signal()
+
+    # QMetaProperty::read: Unable to handle unregistered datatype 'QAbstractTableModel*' for property 'QmlTabulaExtractor::table'
+    @Property(PandasModel, notify=table_changed)
+    def table(self) -> PandasModel:
+        if self._result:
+            self._model = PandasModel(self._result[0])
+            return self._model
+        else:
+            return None
 
     ##############################################
 
@@ -104,9 +119,11 @@ class QmlTabulaExtractor(QObject):
                 relative_area=(top, left, bottom, right),
                 scaled_by_100=True,
                 lattice=lattice,
-                to_csv=True,
+                to_csv=False,
             )
             self._result = data_frames
+            from .QmlApplication import Application
+            Application.instance._table.update(data_frames[0])
             return f'{page_number}'
 
         worker = Worker(job)

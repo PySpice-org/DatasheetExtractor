@@ -27,6 +27,7 @@ import QtQuick.Pdf
 import DatasheetExtractor
 import Constants
 import Controls as Controls
+import Plugins as Plugins
 import Widgets as Widgets
 import '.' as Ui
 
@@ -50,22 +51,6 @@ Page {
         application_window.page_number_changed.connect((page_number) => {
             root.page_number = page_number
         })
-    }
-
-    ListModel {
-        id: modules
-
-        ListElement {
-            title: qsTr('Tabula')
-            icon: ''
-            // source: 'qrc:/.qml'
-        }
-
-        ListElement {
-            title: qsTr('Pinout')
-            icon: ''
-            // source: 'qrc:/.qml'
-        }
     }
 
     DelegateModel{
@@ -96,7 +81,7 @@ Page {
             onClicked: {}
         }
 
-        model: modules
+        model: Plugins.PluginList {}
 
         /*
         groups: [
@@ -137,82 +122,10 @@ Page {
             width: parent.width * .4
             height: parent.height
 
-            function process_page() {
-                // Fixme:
-                var bounds_pc = page_view.selection_area.bounds_pc()
-                console.log('Start processing of page ', page_number)
-                busy_indicator.running = true
-                application.tabula_extractor.process_page_area(
-                    page_number,
-                    bounds_pc.y_inf,
-                    bounds_pc.x_inf,
-                    bounds_pc.y_sup,
-                    bounds_pc.x_sup,
-                    lattice_checkbox.checked,
-                )
-            }
-
-            function on_done() {
-                console.log('Tabula done')
-                busy_indicator.running = false
-                var csv = application.tabula_extractor.csv_table()
-                console.log('CSV ', csv)
-                textarea.text = csv
-            }
-
-            Component.onCompleted: {
-                application.tabula_extractor.done.connect(on_done)
-            }
-
-            ColumnLayout {
-                id: column_layout
+            Plugins.Tabula {
                 anchors.fill: parent
-                anchors.margins: 10
-                spacing: 10
-
-                Label {
-                    font.pixelSize: 30
-                    text: "<b>Tabula Plugin</b>"
-                }
-
-                RowLayout {
-                    Controls.CustomButton {
-                        Layout.preferredHeight: 35
-                        font.pixelSize: 20
-                        font.bold: true
-                        color_label: 'white'
-                        color_background: Style.color.success
-
-                        text: qsTr('Process')
-
-                        onClicked: processing_panel.process_page()
-                    }
-
-                    BusyIndicator {
-                        id: busy_indicator
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        width: 128
-                        height: width
-                        running: false
-                    }
-                }
-
-                CheckBox {
-                    id: lattice_checkbox
-                    checked: false
-                    text: qsTr("Use ruling lines separating each cell")
-                }
-
-                ScrollView {
-                    id: view
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    TextArea {
-                        id: textarea
-                        // text: ''
-                    }
-                }
+                page_number: root.page_number
+                selection_area: page_view.selection_area
             }
         }
     }

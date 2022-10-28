@@ -26,6 +26,11 @@ import logging
 import os
 os.environ['PYSIDE63_OPTION_PYTHON_ENUM'] = '1'
 os.environ['QT_API'] = 'pyside6'
+os.environ['QT_LOGGING_RULES'] = ';'.join((
+    '*.debug=true',
+    'qt.*.debug=false',
+    '*.info=true',
+))
 
 from DatasheetExtractor.frontend.QmlApplication import Application
 

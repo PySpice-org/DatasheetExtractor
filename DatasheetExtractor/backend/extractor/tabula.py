@@ -77,6 +77,8 @@ class TabulaExtractor:
             lattice: bool = True,
             to_csv: bool = False,
     ) -> list[DataFrame]:
+        if page_number < 1:
+            raise ValueError("page must be > 1")
         kwargs = {}
         if relative_area:
             # top, left, bottom, right

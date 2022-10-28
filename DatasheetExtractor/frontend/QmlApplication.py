@@ -63,6 +63,7 @@ from .KeySequenceEditor import KeySequenceEditor
 from .QmlPdf import QmlPdf, QmlPdfPage, QmlPdfMetadata, PageImageProvider
 # from .QmlPdfLibrary import QmlPdfCover, QmlPdfLibrary
 from .QmlTabulaExtractor import QmlTabulaExtractor
+from .PandasModel import PandasModel
 
 from .rcc import resources
 
@@ -419,6 +420,7 @@ class Application(QObject):
         qmlRegisterUncreatableType(QmlPdfPage, 'DatasheetExtractor', 1, 0, 'QmlPdfPage', 'Cannot create QmlPdfPage')
         qmlRegisterUncreatableType(QmlPdfMetadata, 'DatasheetExtractor', 1, 0, 'QmlPdfMetadata', 'Cannot create QmlPdfMetadata')
         qmlRegisterUncreatableType(QmlTabulaExtractor, 'DatasheetExtractor', 1, 0, 'QmlTabulaExtractor', 'Cannot create QmlTabulaExtractor')
+        qmlRegisterUncreatableType(PandasModel, 'DatasheetExtractor', 1, 0, 'PandasModel', 'Cannot create PandasModel')
 
     ##############################################
 
@@ -426,6 +428,12 @@ class Application(QObject):
         context = self._engine.rootContext()
         context.setContextProperty('application', self._qml_application)
         context.setContextProperty('application_settings', self._settings)
+
+        import pandas as pd
+        d = {'col1': [1, 2], 'col2': [3, 4]}
+        df = pd.DataFrame(data=d)
+        self._table = PandasModel(df)
+        context.setContextProperty('atable', self._table)
 
     ##############################################
 
