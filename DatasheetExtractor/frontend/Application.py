@@ -126,7 +126,6 @@ class Application(QObject):
         self._init_application()
 
         self._translator = None
-        self._pdf = None
 
         self._engine = QQmlApplicationEngine()
         self._qml_application = QmlApplication(self)
@@ -183,10 +182,6 @@ class Application(QObject):
     @property
     def page_image_provider(self) -> PageImageProvider:
         return self._page_image_provider
-
-    @property
-    def pdf(self) -> QmlPdf:
-        return self._pdf
 
     ##############################################
 
@@ -419,11 +414,3 @@ class Application(QObject):
         except Exception as exception:
             self._on_critical_exception(exception)
         self._logger.info('User script done')
-
-    ##############################################
-
-    def load_pdf(self, path: str) -> None:
-        self._logger.info('Load pdf {path} ...')
-        # Fixme: why create QmlPdf here
-        self._pdf = QmlPdf(path)
-        self._logger.info('Pdf loaded')

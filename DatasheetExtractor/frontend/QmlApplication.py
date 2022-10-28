@@ -52,9 +52,6 @@ class QmlApplication(QObject):
 
     """Class to implement a Qt QML Application."""
 
-    show_message = Signal(str)   # message
-    show_error = Signal(str, str)   # message backtrace
-
     _logger = _module_logger.getChild('QmlApplication')
 
     ##############################################
@@ -62,9 +59,13 @@ class QmlApplication(QObject):
     def __init__(self, application: 'Application') -> None:
         super().__init__()
         self._application = application
+        self._pdf = None
         self._tabula_extractor = QmlTabulaExtractor()
 
     ##############################################
+
+    show_message = Signal(str)   # message
+    show_error = Signal(str, str)   # message backtrace
 
     def notify_message(self, message: str) -> None:
         self.show_message.emit(str(message))
@@ -89,7 +90,7 @@ class QmlApplication(QObject):
 
     ##############################################
 
-    #!!! signal to notify a pdf was passed as argument
+    # Signal to notify a pdf was passed as argument
     pdf_at_startup = Signal('QUrl')
 
     pdf_changed = Signal()
@@ -97,17 +98,16 @@ class QmlApplication(QObject):
     @Property(QmlPdf, notify=pdf_changed)
     def pdf(self) -> QmlPdf:
         # return null if None
-        return self._application.pdf
-
-    ##############################################
+        return self._pdf
 
     @Slot('QUrl')
     def load_pdf(self, url: QUrl) -> None:
-        # Fixme: API ok ???
-        #   QML -> QmlApplication.load_pdf() -> Application.load_pdf -> emit pdf_changed
-        #   startup -> Application._post_init -> emit pdf_at_startup
+        # startup -> Application._post_init -> emit pdf_at_startup
         path = url.toString(QUrl.FormattingOptions(QUrl.RemoveScheme))
-        self._application.load_pdf(path)
+        self._logger.info('Load pdf {path} ...')
+        self._pdf = QmlPdf(path)
+        self._logger.info('Pdf loaded')
+        # Fixme: use signal to propagate a new path ?
         self._tabula_extractor.path = path
         self.pdf_changed.emit()
 
