@@ -341,7 +341,7 @@ class QmlPdfPage(QObject):
     #         return str(thumbnail_cache[self._page.path].large)
     #     worker = Worker(job)
     #     worker.signals.finished.connect(self.thumbnail_ready)
-    #     from .QmlApplication import Application
+    #     from .Application import Application
     #     Application.instance.thread_pool.start(worker)
 
     ##############################################
@@ -357,7 +357,7 @@ class QmlPdfPage(QObject):
     @Slot(result=str)
     def generate_pixmap(self) -> str:
         self._logger.info(f'generate pixmap for page {self.page_number}')
-        from .QmlApplication import Application
+        from .Application import Application
         image = self._page.pixmap(dpi=300)
         # Fixme: instance is not available at startup
         Application.instance.page_image_provider.output = image
@@ -375,7 +375,7 @@ class QmlPdfPage(QObject):
 
         # from .QmlApplication import Application
         # Application.instance.thread_pool.start(worker)
-            
+
     ##############################################
 
     # text_ready = Signal()
@@ -425,7 +425,7 @@ class QmlPdfPage(QObject):
         # self._logger.info(' '.join(command))
         # process = subprocess.Popen(command)
         raise NotImplementedError
-    
+
 ####################################################################################################
 
 class QmlPdf(QObject):
@@ -442,7 +442,7 @@ class QmlPdf(QObject):
         self._metadata = QmlPdfMetadata(self._pdf)
         # We must prevent garbage collection
         self._pages = {}
-        
+
     ##############################################
 
     @Property(str, constant=True)

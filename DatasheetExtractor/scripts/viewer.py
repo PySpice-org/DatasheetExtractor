@@ -32,7 +32,7 @@ os.environ['QT_LOGGING_RULES'] = ';'.join((
     '*.info=true',
 ))
 
-from DatasheetExtractor.frontend.QmlApplication import Application
+from DatasheetExtractor.frontend.Application import Application
 
 ####################################################################################################
 

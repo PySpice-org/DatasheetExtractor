@@ -113,6 +113,7 @@ class QmlTabulaExtractor(QObject):
             # to_csv: bool = False
     ) -> None:
         self._logger.info(f'page {page_number} [{left:3.0f}, {right:3.0f}]x[{top:3.0f}, {bottom:3.0f}] lattice {lattice}')
+        from .Application import Application
         def job() -> None:
             _ = TabulaExtractor(self._path)
             data_frames = _.extract(
@@ -124,7 +125,6 @@ class QmlTabulaExtractor(QObject):
                 to_csv=False,
             )
             self._result = data_frames
-            from .QmlApplication import Application
             Application.instance._table.update(data_frames[0])
             return f'{page_number}'
 
@@ -133,5 +133,4 @@ class QmlTabulaExtractor(QObject):
         worker.signals.done.connect(self.done)
         # worker.signals.progress.connect(self.progress_fn)
 
-        from .QmlApplication import Application
         Application.instance.thread_pool.start(worker)
