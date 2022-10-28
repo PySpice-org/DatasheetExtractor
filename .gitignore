@@ -36,3 +36,10 @@ devices/15618922d2260bf8a03fc227d573eda71d373f5b.jpg
 o.txt
 page.png
 review.json
+
+doc/providers/
+mupdf-cffi/_mupdf.c
+mupdf-cffi/_mupdf.cpython-310-x86_64-linux-gnu.so
+mupdf-cffi/log.txt
+mupdf-cffi/mupdf-system
+run.sh
