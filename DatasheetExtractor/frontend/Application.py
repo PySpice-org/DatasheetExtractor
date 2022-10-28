@@ -190,6 +190,48 @@ class Application(QObject):
 
     ##############################################
 
+    def _parse_arguments(self) -> None:
+        parser = argparse.ArgumentParser(
+            description='DatasheetExtractor',
+        )
+        parser.add_argument(
+            '--no-qt-message-handler',
+            action='store_true',
+            default=False,
+            help="don't install Qt message handler",
+        )
+        # parser.add_argument(
+        #     '--version',
+        #     action='store_true', default=False,
+        #     help="show version and exit",
+        # )
+        # Fixme: should be able to start application without !!!
+        parser.add_argument(
+            'path', metavar='PATH',
+            action=PathAction,
+            help='pdf or library path',
+        )
+        parser.add_argument(
+            '--dont-translate',
+            action='store_true',
+            default=False,
+            help="Don't translate application",
+        )
+        parser.add_argument(
+            '--user-script',
+            action=PathAction,
+            default=None,
+            help='user script to execute',
+        )
+        parser.add_argument(
+            '--user-script-args',
+            default='',
+            help="user script args (don't forget to quote)",
+        )
+        self._args = parser.parse_args()
+
+    ##############################################
+
     def _print_critical_message(self, message: str) -> None:
         # print('\nCritical Error on {}'.format(datetime.datetime.now()))
         # print('-'*80)
@@ -259,56 +301,6 @@ class Application(QObject):
         QIcon.setThemeName('material')
 
         self._settings = ApplicationSettings()
-
-    ##############################################
-
-    def _parse_arguments(self) -> None:
-
-        parser = argparse.ArgumentParser(
-            description='DatasheetExtractor',
-        )
-
-        parser.add_argument(
-            '--no-qt-message-handler',
-            action='store_true',
-            default=False,
-            help="don't install Qt message handler",
-        )
-
-        # parser.add_argument(
-        #     '--version',
-        #     action='store_true', default=False,
-        #     help="show version and exit",
-        # )
-
-        # Fixme: should be able to start application without !!!
-        parser.add_argument(
-            'path', metavar='PATH',
-            action=PathAction,
-            help='pdf or library path',
-        )
-
-        parser.add_argument(
-            '--dont-translate',
-            action='store_true',
-            default=False,
-            help="Don't translate application",
-        )
-
-        parser.add_argument(
-            '--user-script',
-            action=PathAction,
-            default=None,
-            help='user script to execute',
-        )
-
-        parser.add_argument(
-            '--user-script-args',
-            default='',
-            help="user script args (don't forget to quote)",
-        )
-
-        self._args = parser.parse_args()
 
     ##############################################
 
