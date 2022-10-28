@@ -163,6 +163,18 @@ class Application(QObject):
 
     ##############################################
 
+    @classmethod
+    def setup_gui_application(self) -> None:
+        # https://bugreports.qt.io/browse/QTBUG-55167
+        # for path in (
+        #         'qt.qpa.xcb.xcberror',
+        # ):
+        #     QtCore.QLoggingCategory.setFilterRules('{} = false'.format(path))
+        # QQuickStyle.setStyle('Material')
+        pass
+
+    ##############################################
+
     # Fixme: Singleton
 
     @classmethod
@@ -333,18 +345,6 @@ class Application(QObject):
         QIcon.setThemeName('material')
 
         self._settings = ApplicationSettings()
-
-    ##############################################
-
-    @classmethod
-    def setup_gui_application(self) -> None:
-        # https://bugreports.qt.io/browse/QTBUG-55167
-        # for path in (
-        #         'qt.qpa.xcb.xcberror',
-        # ):
-        #     QtCore.QLoggingCategory.setFilterRules('{} = false'.format(path))
-        # QQuickStyle.setStyle('Material')
-        pass
 
     ##############################################
 

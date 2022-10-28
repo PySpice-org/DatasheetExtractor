@@ -60,6 +60,8 @@ class QmlTabulaExtractor(QObject):
 
     ##############################################
 
+    # Fixme: use signal to propagate a new path
+
     @property
     def path(self) -> str:
         return self._path

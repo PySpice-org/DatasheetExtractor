@@ -38,7 +38,7 @@ class PandasModel(QAbstractTableModel):
     ##############################################
 
     def __init__(self, dataframe: Optional[pd.DataFrame], parent: Optional[QObject] = None) -> None:
-        QAbstractTableModel.__init__(self, parent)
+        super().__init__(parent)
         if dataframe is not None:
             self._dataframe = dataframe
         else:
