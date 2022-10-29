@@ -37,17 +37,20 @@ Item {
      */
 
     // application
+    property var application_window: application_window
     property int page_number
     property var selection_area
 
     /******************************************************/
+
+    readonly property var tabula_extractor: application.tabula_extractor
 
     function process_page() {
         // Fixme:
         var bounds_pc = selection_area.bounds_pc()
         console.log('Start processing of page ', page_number)
         busy_indicator.running = true
-        application.tabula_extractor.process_page_area(
+        tabula_extractor.process_page_area(
             page_number,
             bounds_pc.y_inf,
             bounds_pc.x_inf,
@@ -62,9 +65,17 @@ Item {
         busy_indicator.running = false
     }
 
+    function save() {
+        var path = tabula_extractor.save()
+        if (path.length)
+            application_window.show_message('Write %1'.arg(path))
+        else
+            application_window.clear_message()
+    }
+
     Component.onCompleted: {
-        // application.tabula_extractor.done.connect(on_done)
-        application.tabula_extractor.table_changed.connect(on_done)
+        // tabula_extractor.done.connect(on_done)
+        tabula_extractor.table_changed.connect(on_done)
     }
 
     /******************************************************/
@@ -100,8 +111,8 @@ Item {
                 color_label: 'white'
                 color_background: Style.color.primary
                 text: qsTr('Save')
-                onClicked: application.tabula_extractor.save()
-                enabled: textarea.text
+                onClicked: save()
+                enabled: textarea.text && !error_message.text
             }
         }
 
@@ -114,21 +125,20 @@ Item {
 
             TextField {
                 Layout.preferredWidth: root.width / 2
+                // don't update
+                // text: tabula_extractor.suffix
                 onEditingFinished: {
-                    application.tabula_extractor.suffix = text
-                    if (application.tabula_extractor.suffix !== text) {
-                        error_message.text = "Invalid suffix"
-                    } else
-                        error_message.text = ""
+                    tabula_extractor.suffix = text
                 }
                 Component.onCompleted: {
-                    text = application.tabula_extractor.suffix
+                    text = tabula_extractor.suffix
                 }
             }
 
             Label {
                 id: error_message
                 color: Style.color.danger
+                text: tabula_extractor.suffix_error_message
             }
         }
 
@@ -152,7 +162,7 @@ Item {
             Layout.preferredHeight: 200
             TextArea {
                 id: textarea
-                text: application.tabula_extractor.csv_table
+                text: tabula_extractor.csv_table
             }
         }
 
@@ -166,7 +176,7 @@ Item {
             columnSpacing: 1
             rowSpacing: 1
             clip: true
-            model: application.tabula_extractor.table
+            model: tabula_extractor.table
              columnWidthProvider: function (column) { return -1 }
 
             delegate: Rectangle {

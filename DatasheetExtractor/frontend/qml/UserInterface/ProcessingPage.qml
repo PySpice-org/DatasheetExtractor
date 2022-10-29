@@ -124,6 +124,7 @@ Page {
 
             Plugins.Tabula {
                 anchors.fill: parent
+                application_window: root.application_window
                 page_number: root.page_number
                 selection_area: page_view.selection_area
             }

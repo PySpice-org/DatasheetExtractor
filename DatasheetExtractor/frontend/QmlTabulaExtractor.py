@@ -66,6 +66,7 @@ class QmlTabulaExtractor(QObject):
         self._df = None
         self._table = PandasModel()
         self._suffix = self.SUFFIX
+        self._suffix_error_message = ''
 
     ##############################################
 
@@ -79,6 +80,21 @@ class QmlTabulaExtractor(QObject):
 
     ##############################################
 
+    suffix_error_message_changed = Signal()
+
+    @Property(str, notify=suffix_error_message_changed)
+    def suffix_error_message(self) -> str:
+        return self._suffix_error_message
+
+    @suffix_error_message.setter
+    def suffix_error_message(self, value: str) -> None:
+        self._logger.info(f'"{self._suffix_error_message}" vs "{value}"')
+        if self._suffix_error_message != value:
+            self._suffix_error_message = value
+            self.suffix_error_message_changed.emit()
+
+    ##############################################
+
     suffix_changed = Signal()
 
     @Property(str, notify=suffix_changed)
@@ -87,15 +103,34 @@ class QmlTabulaExtractor(QObject):
 
     @suffix.setter
     def suffix(self, value: str) -> None:
-        if self.suffix != value:
+        self._logger.info(f'"{value}" vs "{self._suffix}"')
+        if self._suffix != value:
+            is_valid = True
+            open_count = value.count('{')
+            close_count = value.count('}')
             if len(value) > self.SUFFIX_LENGTH_MAX:
-                value = value[:self.SUFFIX_LENGTH_MAX]
-                self._logger.warning('too long suffix')
-            # Fixme: check valid use of {}
-            #  count { and }
-            #  check {<...>} = page_number
-            self._suffix = value
-            self.suffix_changed.emit()
+                is_valid = False
+                message = 'too long suffix'
+            elif open_count != close_count:
+                is_valid = False
+                message = '{ and } mismatch'
+            elif 1 < open_count:
+                is_valid = False
+                message = 'more than one {'
+            elif open_count:
+                open_index = value.find('{')
+                close_index = value.find('}')
+                if value[open_index+1:close_index] != 'page_number':
+                    is_valid = False
+                    message = 'only {page_number} is allowed'
+            if is_valid:
+                self._suffix = value
+                self.suffix_changed.emit()
+                self.suffix_error_message = ''
+            else:
+                self._logger.warning(message)
+                self._suffix = None
+                self.suffix_error_message = message
 
     ##############################################
 
@@ -168,11 +203,15 @@ class QmlTabulaExtractor(QObject):
 
     ##############################################
 
-    @Slot()
+    @Slot(result=str)
     def save(self) -> None:
-        suffix = self._suffix.format(page_number=self._page_number)
-        path = self._path.parent.joinpath(self._path.stem + suffix)
-        backup_file(path)
-        self._logger.info(f"Write {path}")
-        # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
-        self.first_df.to_csv(path)
+        if self._suffix:
+            suffix = self._suffix.format(page_number=self._page_number)
+            path = self._path.parent.joinpath(self._path.stem + suffix)
+            backup_file(path)
+            self._logger.info(f"Write {path}")
+            # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
+            self.first_df.to_csv(path)
+            return str(path)
+        else:
+            return ''
