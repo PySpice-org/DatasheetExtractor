@@ -122,23 +122,19 @@ class Application(QObject):
         # self._application = QGuiApplication(sys.argv)
         # use QCoreApplication::instance() to get instance
         self._application = QApplication(sys.argv)
-        self._application.main = self
+        #! self._application.main = self
+
         self._init_application()
 
-        self._translator = None
-
+        # combines a QQmlEngine and QQmlComponent
+        # to provide a convenient way to load a single QML file
         self._engine = QQmlApplicationEngine()
+
         self._qml_application = QmlApplication(self)
-        self._application.qml_main = self._qml_application
+        #! self._application.qml_main = self._qml_application
 
         self._platform = QtPlatform()
         # self._logger.info('\n' + str(self._platform))
-
-        # self._load_translation()
-        self._set_context_properties()
-        self._load_qml_main()
-
-        # self._run_before_event_loop()
 
         self._thread_pool = QThreadPool()
         number_of_threads_max = self._thread_pool.maxThreadCount()
@@ -147,11 +143,21 @@ class Application(QObject):
         self._page_image_provider = PageImageProvider()
         self._engine.addImageProvider('page_image', self._page_image_provider)
 
+        self._translator = None
+        # self._load_translation()
+        self._set_context_properties()
+        self._load_qml_main()
+
         QTimer.singleShot(0, self._post_init)
 
-        # self._view = QQuickView()
-        # self._view.setResizeMode(QQuickView.SizeRootObjectToView)
-        # self._view.setSource(qml_url)
+        # if isinstance(self._application, QGuiApplication):
+        #     self._view = QQuickView()
+        #     self._view.setResizeMode(QQuickView.SizeRootObjectToView)
+        #     # self._view.setSource(qml_url)
+        #     if self._view.status() == QQuickView.Error:
+        #         sys.exit(-1)
+        # else:
+        #     self._view = None
 
     ##############################################
 
@@ -313,6 +319,7 @@ class Application(QObject):
     def _set_context_properties(self) -> None:
         context = self._engine.rootContext()
         context.setContextProperty('application', self._qml_application)
+        # Fixme: -> QmlApplication ?
         context.setContextProperty('application_settings', self._settings)
 
     ##############################################
@@ -342,9 +349,15 @@ class Application(QObject):
     ##############################################
 
     def exec_(self) -> None:
-        # self._view.show()
+        # if self._view is not None:
+        #     self._view.show()
         self._logger.info('Start event loop')
-        sys.exit(self._application.exec_())
+        rc = self._application.exec()
+        # Deleting the view before it goes out of scope is required
+        # to make sure all child QML instances are destroyed in the correct order.
+        # if self._view is not None:
+        #     del self._view
+        sys.exit(rc)
 
     ##############################################
 
