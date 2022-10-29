@@ -27,8 +27,19 @@ df = tabula.read_pdf(
 )
 
 df = df[0]
+
+print(df.to_csv())
+
 print(type(df))
 print(df)
-print('rows', len(df))
+print('shape', df.shape)
+print('number of rows', len(df))
+print('index', df.index)
 print('columns', df.columns)
-# print(df.to_csv())
+
+for j in range(df.shape[1]):   # iterate over columns
+    column_length = 0
+    for i in range(df.shape[0]):   # iterate over rows
+        value = df.iloc[i, j]   # get cell value
+        column_length = max(len(str(value)), column_length)
+    print(f'column length {column_length}')

@@ -102,7 +102,7 @@ Page {
         ListView {
             id: list_view
             // currentIndex: -1
-            width: parent.width * .2
+            width: 200 // parent.width * .2
             height: parent.height
 	    spacing: 0
 
@@ -119,7 +119,7 @@ Page {
 
         Item {
             id: processing_panel
-            width: parent.width * .4
+            width: parent.width - page_view.width - list_view.width
             height: parent.height
 
             Plugins.Tabula {

@@ -109,46 +109,9 @@ class PandasModel(QAbstractTableModel):
                 return str(self._dataframe.index[section])
         return None
 
-####################################################################################################
-
     ##############################################
 
-    # def data(self, index, role):
-    #     row = index.row()
-    #     column = index.column()
-    #     match role:
-    #         case Qt.DisplayRole:
-    #             return self._data[row][column]
-
-    ##############################################
-
-    # def roleNames():
-    #     return {QtCore.Qt.DisplayRole: "display"}
-
-    ##############################################
-
-    # def setData(self, index, value, role=QtCore.Qt.EditRole):
-    #     row = index.row()
-    #     column = index.column()
-    #     item = self._data[row][column]
-    #     return False
-
-    ##############################################
-
-    # def headerData(self, section, orientation, role):
-    #     if role == QtCore.Qt.DisplayRole:
-    #         if orientation == QtCore.Qt.Horizontal:
-    #             return self.h_headers[section]
-    #         if orientation == QtCore.Qt.Vertical:
-    #             return self.v_headers[section]
-
-    ##############################################
-
-    # def flags(self, index):
-    #     return (
-    #         QtCore.Qt.ItemIsEditable
-    #         | QtCore.Qt.ItemIsEnabled
-    #         | QtCore.Qt.ItemIsSelectable
-    #         | QtCore.Qt.ItemIsDragEnabled
-    #         | QtCore.Qt.ItemIsDropEnabled
-    #     )
+    # def roleNames(self) -> dict:
+    #     return {
+    #         QtCore.Qt.DisplayRole: QByteArray(b'display'),
+    #     }

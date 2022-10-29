@@ -32,8 +32,8 @@ ToolButton {
     icon.width: size
 
     hoverEnabled: tip
-    ToolTip.delay: 1000
+    ToolTip.delay: 2000
     ToolTip.timeout: 5000
-    ToolTip.visible: hovered
+    ToolTip.visible: enabled && hovered
     ToolTip.text: tip
 }

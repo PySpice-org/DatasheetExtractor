@@ -22,14 +22,17 @@ __all__ = ['QmlTabulaExtractor']
 
 ####################################################################################################
 
-# from pathlib import Path
+from pathlib import Path
 from typing import Any
 import logging
+
+import pandas as pd
 
 from qtpy.QtCore import Property, Signal, Slot, QObject, Qt, QAbstractTableModel, QModelIndex
 from qtpy.QtQml import QmlElement, QmlUncreatable
 
 from DatasheetExtractor.backend.extractor.tabula import TabulaExtractor
+from DatasheetExtractor.common.backup import backup_file
 from .Runnable import Worker
 from .PandasModel import PandasModel
 
@@ -51,55 +54,59 @@ class QmlTabulaExtractor(QObject):
 
     _logger = _module_logger.getChild('QmlTabulaExtractor')
 
+    SUFFIX = ".{page_number}.csv"
+    SUFFIX_LENGTH_MAX = 256
+
     ##############################################
 
     def __init__(self) -> None:
         super().__init__()
         self._path = None
-        self._result = None
+        self._page_number = None
+        self._df = None
         self._table = PandasModel()
+        self._suffix = self.SUFFIX
 
     ##############################################
 
     @property
     def path(self) -> str:
-        return self._path
+        return str(self._path)
 
     @path.setter
     def path(self, value: str) -> None:
-        self._path = str(value)
+        self._path = Path(value)
 
     ##############################################
 
-    # @Property(str)
-    @Slot(result=str)
-    def csv_table(self) -> str:
-        if self._result:
-            # return self._result[0]
-            return self._result[0].to_csv()
-        else:
-            return ''
+    suffix_changed = Signal()
+
+    @Property(str, notify=suffix_changed)
+    def suffix(self) -> str:
+        return self._suffix
+
+    @suffix.setter
+    def suffix(self, value: str) -> None:
+        if self.suffix != value:
+            if len(value) > self.SUFFIX_LENGTH_MAX:
+                value = value[:self.SUFFIX_LENGTH_MAX]
+                self._logger.warning('too long suffix')
+            # Fixme: check valid use of {}
+            #  count { and }
+            #  check {<...>} = page_number
+            self._suffix = value
+            self.suffix_changed.emit()
 
     ##############################################
 
+    @property
+    def first_df(self) -> pd.DataFrame:
+        return self._df[0]
+
+    ##############################################
+
+    # done = Signal()
     table_changed = Signal()
-
-    # Use QObject type instead of PandasModel else
-    #   QMetaProperty::read: Unable to handle unregistered datatype 'QAbstractTableModel*'
-    #   for property 'QmlTabulaExtractor::table'
-    @Property(QObject, notify=table_changed)
-    def table(self) -> PandasModel:
-        # if self._result:
-        #     self._model = PandasModel(self._result[0])
-        #     return self._model
-        # else:
-        #     return None
-        return self._table
-
-    ##############################################
-
-    # result = Signal(str)
-    done = Signal()
 
     # Fixme: 'QList<int>' ok ?
     @Slot(int, float, float, float, float, bool)
@@ -126,13 +133,46 @@ class QmlTabulaExtractor(QObject):
                 lattice=lattice,
                 to_csv=False,
             )
-            self._result = data_frames
+            self._page_number = page_number
+            self._df = data_frames
             self._table.update(data_frames[0])
             return f'{page_number}'
 
         worker = Worker(job)
         # worker.signals.result.connect(self.result)
-        worker.signals.done.connect(self.done)
+        worker.signals.done.connect(self.table_changed)
         # worker.signals.progress.connect(self.progress_fn)
 
         Application.instance.thread_pool.start(worker)
+
+    ##############################################
+
+    # Use QObject type instead of PandasModel else
+    #   QMetaProperty::read: Unable to handle unregistered datatype 'QAbstractTableModel*'
+    #   for property 'QmlTabulaExtractor::table'
+    @Property(QObject, constant=True)   # notify=table_changed
+    def table(self) -> PandasModel:
+        # if self._df:
+        #     self._model = PandasModel(self.first_df)
+        #     return self._model
+        # else:
+        #     return None
+        return self._table
+
+    @Property(str, notify=table_changed)
+    def csv_table(self) -> str:
+        if self._df:
+            return self.first_df.to_csv()
+        else:
+            return ''
+
+    ##############################################
+
+    @Slot()
+    def save(self) -> None:
+        suffix = self._suffix.format(page_number=self._page_number)
+        path = self._path.parent.joinpath(self._path.stem + suffix)
+        backup_file(path)
+        self._logger.info(f"Write {path}")
+        # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html
+        self.first_df.to_csv(path)

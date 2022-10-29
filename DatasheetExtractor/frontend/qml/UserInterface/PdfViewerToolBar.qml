@@ -80,7 +80,8 @@ RowLayout {
 
     Widgets.ToolButtonTip {
         action: Action {
-            icon.source: "qrc:/icons/svg/zoom-fit-width.svg"
+            // icon.source: "qrc:/icons/svg/zoom-fit-width.svg"
+            icon.name: "zoom-fit-width" // not material
             onTriggered: {
                 // Fixme: check
                 var item = pdf_viewer_page.contentItem
@@ -92,7 +93,8 @@ RowLayout {
 
     Widgets.ToolButtonTip {
         action: Action {
-            icon.source: "qrc:/icons/svg/zoom-fit-best.svg"
+            // icon.source: "qrc:/icons/svg/zoom-fit-best.svg"
+            icon.name: "settings-overscan-black"
             onTriggered: {
                 var item = pdf_viewer_page.contentItem
                 page_viewer.scaleToPage(item.width, item.height)
@@ -103,7 +105,8 @@ RowLayout {
     Widgets.ToolButtonTip {
         action: Action {
             shortcut: "Ctrl+0"
-            icon.source: "qrc:/icons/svg/zoom-original.svg"
+            // icon.source: "qrc:/icons/svg/zoom-original.svg"
+            icon.name: "fullscreen-black"
             onTriggered: page_viewer.resetScale()
         }
     }
@@ -129,26 +132,53 @@ RowLayout {
     Widgets.ToolButtonTip {
         // Navigate in history
         action: Action {
-            icon.name: "arrow-back-black"
+            icon.name: "undo-black"
             enabled: page_viewer.backEnabled
             onTriggered: page_viewer.back()
         }
-        // Fixme: check
-        ToolTip.visible: enabled && hovered
-        ToolTip.delay: 2000
-        ToolTip.text: "go back"
+        tip: "go back"
     }
 
     Widgets.ToolButtonTip {
         // Navigate in history
         action: Action {
-            icon.name: "arrow-forward-black"
+            icon.name: "redo-black"
             enabled: page_viewer.forwardEnabled
             onTriggered: page_viewer.forward()
         }
-        ToolTip.visible: enabled && hovered
-        ToolTip.delay: 2000
-        ToolTip.text: "go forward"
+        tip: "go forward"
+    }
+
+    Widgets.ToolButtonTip {
+        action: Action {
+            icon.name: "first-page-black"
+            onTriggered: page_viewer.go_to_first()
+        }
+        tip: "go to first"
+    }
+
+    Widgets.ToolButtonTip {
+        action: Action {
+            icon.name: "arrow-back-black"
+            onTriggered: page_viewer.go_to_prev()
+        }
+        tip: "go prev"
+    }
+
+    Widgets.ToolButtonTip {
+        action: Action {
+            icon.name: "arrow-forward-black"
+            onTriggered: page_viewer.go_to_next()
+        }
+        tip: "go next"
+    }
+
+    Widgets.ToolButtonTip {
+        action: Action {
+            icon.name: "last-page-black"
+            onTriggered: page_viewer.go_to_last()
+        }
+        tip: "go to last"
     }
 
     SpinBox {
@@ -170,7 +200,7 @@ RowLayout {
         */
 
         // only emitted when the spin box value has been interactively modified by the user
-        onValueModified: page_viewer.goToPage(value - 1)
+        onValueModified: page_viewer.go_to_page(value)
 
         Component.onCompleted: {
             pdf_viewer_page.page_number_changed.connect((page_number) => {

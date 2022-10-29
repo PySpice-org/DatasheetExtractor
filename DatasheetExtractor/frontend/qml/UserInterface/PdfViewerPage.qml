@@ -29,6 +29,7 @@ import Widgets 1.0 as Widgets
 import '.' 1.0 as Ui
 
 Page {
+    id: root
 
     /*******************************************************
      *
@@ -47,8 +48,6 @@ Page {
     signal page_number_changed(int page_number)
 
     /******************************************************/
-
-    id: root
 
     Component.onCompleted: {
         console.log("sidebar y", sidebar.y, root.y, application_window.stack_layout.y)
@@ -72,6 +71,26 @@ Page {
             var page_number = currentPage + 1
             console.log('emit PdfViewerPage.page_number_changed', page_number)
             page_number_changed(page_number)
+        }
+
+        function go_to_first() {
+            page_viewer.goToPage(0)
+        }
+
+        function go_to_last() {
+            page_viewer.goToPage(pdf_document.pageCount -1)
+        }
+
+        function go_to_prev() {
+            page_viewer.goToPage(page_viewer.currentPage -1)
+        }
+
+        function go_to_next() {
+            page_viewer.goToPage(page_viewer.currentPage +1)
+        }
+
+        function go_to_page(page_number) {
+            page_viewer.goToPage(page_number -1)
         }
     }
 

@@ -147,6 +147,7 @@ class Application(QObject):
         self._set_context_properties()
         self._load_qml_main()
 
+        # Will be called just after the event loop startup
         QTimer.singleShot(0, self._post_init)
 
         # if isinstance(self._application, QGuiApplication):

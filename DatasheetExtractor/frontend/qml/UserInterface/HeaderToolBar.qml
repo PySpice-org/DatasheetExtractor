@@ -102,7 +102,7 @@ ToolBar {
 
         Ui.PdfViewerToolBar {
             id: pdf_viewer_toolbar
-            visible: pdf_viewer_page.visible
+            visible: pdf_viewer_page.visible || processing_page.visible
             // anchors.fill: parent
             // anchors.rightMargin: 6
 

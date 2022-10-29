@@ -73,6 +73,7 @@ Page {
         anchors.margins: 10
         spacing: 10
 
+        /*
         RowLayout {
             spacing: 10
 
@@ -84,6 +85,7 @@ Page {
                 text: page_number
             }
         }
+        */
 
         RowLayout {
             spacing: 10
