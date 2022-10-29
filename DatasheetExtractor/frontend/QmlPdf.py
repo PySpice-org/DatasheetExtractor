@@ -41,7 +41,7 @@ from qtpy.QtCore import (
     QCoreApplication
 )
 from qtpy.QtGui import QImage, QPixmap
-# from qtpy.QtQml import QQmlListProperty
+from qtpy.QtQml import QmlElement, QmlUncreatable
 from qtpy.QtQuick import QQuickImageProvider
 
 from PIL import ImageQt, Image
@@ -52,6 +52,12 @@ import markdown
 from DatasheetExtractor.backend.pdf.document import PdfDocument
 from DatasheetExtractor.backend.pdf.page import PdfPage
 #! from .Runnable import Worker
+
+####################################################################################################
+
+QML_IMPORT_NAME = 'DatasheetExtractor'
+QML_IMPORT_MAJOR_VERSION = 1
+QML_IMPORT_MINOR_VERSION = 0   # Optional
 
 ####################################################################################################
 
@@ -107,6 +113,8 @@ class PageImageProvider(QQuickImageProvider):
 
 ####################################################################################################
 
+@QmlElement
+@QmlUncreatable('QmlPdfMetadata')
 class QmlPdfMetadata(QObject):
 
     _logger = _module_logger.getChild('QmlPdfMetadata')
@@ -288,6 +296,8 @@ class QmlPdfMetadata(QObject):
 
 ####################################################################################################
 
+@QmlElement
+@QmlUncreatable('QmlPdfPage')
 class QmlPdfPage(QObject):
 
     _logger = _module_logger.getChild('QmlPdfPage')
@@ -428,6 +438,8 @@ class QmlPdfPage(QObject):
 
 ####################################################################################################
 
+@QmlElement
+@QmlUncreatable('QmlPdf')
 class QmlPdf(QObject):
 
     new_page = Signal(int)

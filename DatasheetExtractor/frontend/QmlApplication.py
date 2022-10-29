@@ -28,10 +28,8 @@ __all__ = ['QmlApplication']
 import logging
 import traceback
 
-from qtpy.QtCore import (
-    Property, Signal, Slot, QObject,
-    QUrl
-)
+from qtpy.QtCore import Property, Signal, Slot, QObject, QUrl
+from qtpy.QtQml import QmlElement, QmlUncreatable
 
 from .ApplicationMetadata import ApplicationMetadata
 from .QmlPdf import QmlPdf
@@ -48,6 +46,14 @@ _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
+QML_IMPORT_NAME = 'DatasheetExtractor'
+QML_IMPORT_MAJOR_VERSION = 1
+QML_IMPORT_MINOR_VERSION = 0   # Optional
+
+####################################################################################################
+
+@QmlElement
+@QmlUncreatable('QmlApplication')
 class QmlApplication(QObject):
 
     """Class to implement a Qt QML Application."""

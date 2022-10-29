@@ -35,15 +35,20 @@ import logging
 
 # Fixme:
 from qtpy.QtCore import QSettings
+from qtpy.QtCore import Property, Signal, Slot, QObject
+from qtpy.QtQml import QmlElement, QmlUncreatable
+
 # Fixme: https://doc.qt.io/qtforpython/PySide6/QtQml/QQmlListReference.html
 # from qtpy.QtQml import QQmlListProperty
-from qtpy.QtCore import (
-    Property, Signal, Slot, QObject,
-    # QUrl,
-)
 
 from . import DefaultSettings
 from .DefaultSettings import Shortcuts
+
+####################################################################################################
+
+QML_IMPORT_NAME = 'DatasheetExtractor'
+QML_IMPORT_MAJOR_VERSION = 1
+QML_IMPORT_MINOR_VERSION = 0   # Optional
 
 ####################################################################################################
 
@@ -51,6 +56,8 @@ _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
+@QmlElement
+@QmlUncreatable('Shortcut')
 class Shortcut(QObject):
 
     _logger = _module_logger.getChild('Shortcut')
@@ -58,9 +65,7 @@ class Shortcut(QObject):
     ##############################################
 
     def __init__(self, settings, name, display_name, sequence):
-
         super().__init__()
-
         self._settings = settings
         self._name = name
         self._display_name = display_name
@@ -100,6 +105,8 @@ class Shortcut(QObject):
 
 ####################################################################################################
 
+@QmlElement
+@QmlUncreatable('ApplicationSettings')
 class ApplicationSettings(QSettings):
 
     """Class to implement application settings."""
@@ -109,10 +116,8 @@ class ApplicationSettings(QSettings):
     ##############################################
 
     def __init__(self):
-
         super().__init__()
         self._logger.info('Loading settings from {}'.format(self.fileName()))
-
         self._shortcut_map = {
             name: Shortcut(self, name, self._shortcut_display_name(name), self._get_shortcut(name))
             for name in self._shortcut_names

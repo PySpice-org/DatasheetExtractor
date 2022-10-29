@@ -46,7 +46,7 @@ from qtpy.QtCore import (
     QTimer, QUrl, QThreadPool, QLocale,
 )
 from qtpy.QtGui import QIcon
-from qtpy.QtQml import qmlRegisterType, qmlRegisterUncreatableType, QQmlApplicationEngine
+from qtpy.QtQml import QQmlApplicationEngine
 from qtpy.QtWidgets import QApplication
 # from qtpy.QtQuickControls2 import QQuickStyle
 
@@ -135,7 +135,6 @@ class Application(QObject):
         # self._logger.info('\n' + str(self._platform))
 
         # self._load_translation()
-        self._register_qml_types()
         self._set_context_properties()
         self._load_qml_main()
 
@@ -308,32 +307,6 @@ class Application(QObject):
             self._application.installTranslator(self._translator)
         else:
             raise NameError(f'No translator for locale {locale.name()}')
-
-    ##############################################
-
-    def _register_qml_types(self) -> None:
-        qmlRegisterType(KeySequenceEditor, 'DatasheetExtractor', 1, 0, 'KeySequenceEditor')
-        # PyQt6 doesn't implement qmlRegisterUncreatableType ???
-        # https://doc.qt.io/qtforpython/PySide6/QtQml/qmlRegisterUncreatableType.html
-        #   see also https://doc.qt.io/qtforpython/PySide6/QtQml/QmlUncreatable.html#qmluncreatable
-        for cls in (
-                Shortcut,
-                ApplicationSettings,
-                QmlApplication,
-                QmlPdf,
-                QmlPdfPage,
-                QmlPdfMetadata,
-                QmlTabulaExtractor,
-                # PandasModel,
-        ):
-            name = cls.__name__
-            qmlRegisterUncreatableType(
-                cls,
-                'DatasheetExtractor',
-                1, 0,
-                name,
-                f'Cannot create {name}',
-            )
 
     ##############################################
 

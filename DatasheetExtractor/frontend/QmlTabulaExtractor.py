@@ -35,18 +35,18 @@ from .PandasModel import PandasModel
 
 ####################################################################################################
 
+_module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
 QML_IMPORT_NAME = 'DatasheetExtractor'
 QML_IMPORT_MAJOR_VERSION = 1
 QML_IMPORT_MINOR_VERSION = 0   # Optional
 
 ####################################################################################################
 
-_module_logger = logging.getLogger(__name__)
-
-####################################################################################################
-
-# @QmlElement
-# @QmlUncreatable
+@QmlElement
+@QmlUncreatable('QmlTabulaExtractor')
 class QmlTabulaExtractor(QObject):
 
     _logger = _module_logger.getChild('QmlTabulaExtractor')
