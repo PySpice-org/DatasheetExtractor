@@ -57,6 +57,7 @@ class QmlTabulaExtractor(QObject):
         super().__init__()
         self._path = None
         self._result = None
+        self._table = PandasModel()
 
     ##############################################
 
@@ -83,14 +84,17 @@ class QmlTabulaExtractor(QObject):
 
     table_changed = Signal()
 
-    # QMetaProperty::read: Unable to handle unregistered datatype 'QAbstractTableModel*' for property 'QmlTabulaExtractor::table'
-    @Property(PandasModel, notify=table_changed)
+    # Use QObject type instead of PandasModel else
+    #   QMetaProperty::read: Unable to handle unregistered datatype 'QAbstractTableModel*'
+    #   for property 'QmlTabulaExtractor::table'
+    @Property(QObject, notify=table_changed)
     def table(self) -> PandasModel:
-        if self._result:
-            self._model = PandasModel(self._result[0])
-            return self._model
-        else:
-            return None
+        # if self._result:
+        #     self._model = PandasModel(self._result[0])
+        #     return self._model
+        # else:
+        #     return None
+        return self._table
 
     ##############################################
 
@@ -123,7 +127,7 @@ class QmlTabulaExtractor(QObject):
                 to_csv=False,
             )
             self._result = data_frames
-            Application.instance._table.update(data_frames[0])
+            self._table.update(data_frames[0])
             return f'{page_number}'
 
         worker = Worker(job)

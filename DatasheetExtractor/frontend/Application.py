@@ -134,9 +134,6 @@ class Application(QObject):
         self._platform = QtPlatform()
         # self._logger.info('\n' + str(self._platform))
 
-        # Fixme: why we cannot pass the model elsewhere that using context ???
-        self._table = PandasModel()
-
         # self._load_translation()
         self._register_qml_types()
         self._set_context_properties()
@@ -327,7 +324,7 @@ class Application(QObject):
                 QmlPdfPage,
                 QmlPdfMetadata,
                 QmlTabulaExtractor,
-                PandasModel,
+                # PandasModel,
         ):
             name = cls.__name__
             qmlRegisterUncreatableType(
@@ -344,7 +341,6 @@ class Application(QObject):
         context = self._engine.rootContext()
         context.setContextProperty('application', self._qml_application)
         context.setContextProperty('application_settings', self._settings)
-        context.setContextProperty('atable', self._table)
 
     ##############################################
 
@@ -358,7 +354,7 @@ class Application(QObject):
         main_qml_path = qml_path.joinpath('main.qml')
         self._qml_url = QUrl.fromLocalFile(str(main_qml_path))
         # QUrl('qrc:/qml/main.qml')
-        #! self._engine.objectCreated.connect(self._check_qml_is_loaded)
+        self._engine.objectCreated.connect(self._check_qml_is_loaded)
         self._engine.load(self._qml_url)
 
         self._logger.info('QML loaded')

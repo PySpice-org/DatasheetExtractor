@@ -26,12 +26,17 @@ from typing import Optional
 
 import pandas as pd
 
-from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex, QObject
+from qtpy.QtCore import QAbstractTableModel, Qt, QModelIndex, QObject
+from qtpy.QtQml import QmlElement, QmlUncreatable
 
 ####################################################################################################
 
-# @QmlElement
-# @QmlUncreatable('PandasModel ...')
+QML_IMPORT_NAME = "DatasheEtextractor"
+QML_IMPORT_MAJOR_VERSION = 1
+QML_IMPORT_MINOR_VERSION = 0
+
+@QmlElement
+@QmlUncreatable('PandasModel')
 class PandasModel(QAbstractTableModel):
     """A model to interface a Qt view with pandas dataframe """
 

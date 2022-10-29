@@ -128,7 +128,7 @@ Item {
             columnSpacing: 1
             rowSpacing: 1
             // clip: true
-            model: atable
+            model: application.tabula_extractor.table
 
             delegate: Rectangle {
                 implicitWidth: 150
