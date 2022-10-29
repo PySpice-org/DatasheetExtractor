@@ -53,15 +53,14 @@ from qtpy.QtWidgets import QApplication
 from DatasheetExtractor.common.ArgparseAction import PathAction
 from DatasheetExtractor.common.platform import QtPlatform
 from .ApplicationMetadata import ApplicationMetadata
-from .ApplicationSettings import ApplicationSettings, Shortcut
-from .KeySequenceEditor import KeySequenceEditor
-from .PandasModel import PandasModel
 from .QmlApplication import QmlApplication
-from .QmlPdf import QmlPdf, QmlPdfPage, QmlPdfMetadata, PageImageProvider
-from .QmlTabulaExtractor import QmlTabulaExtractor
+from .QmlPdf import PageImageProvider
 
 # Load Resources
 from .rcc import resources
+
+# Register for QML
+from .KeySequenceEditor import KeySequenceEditor
 
 ####################################################################################################
 
@@ -168,10 +167,6 @@ class Application(QObject):
     @property
     def platform(self) -> QtPlatform:
         return self._platform
-
-    @property
-    def settings(self) -> ApplicationSettings:
-        return self._settings
 
     @property
     def qml_application(self) -> QmlApplication:
@@ -285,19 +280,21 @@ class Application(QObject):
     ##############################################
 
     def _init_application(self) -> None:
+        # Define Organisation
         self._application.setOrganizationName(ApplicationMetadata.organisation_name)
         self._application.setOrganizationDomain(ApplicationMetadata.organisation_domain)
 
+        # Define Application
         self._application.setApplicationName(ApplicationMetadata.name)
         self._application.setApplicationDisplayName(ApplicationMetadata.display_name)
         self._application.setApplicationVersion(ApplicationMetadata.version)
 
+        # Set logo
         # logo_path = ':/icons/logo/logo-256.png'
         # self._application.setWindowIcon(QIcon(logo_path))
 
+        # Set icon theme
         QIcon.setThemeName('material')
-
-        self._settings = ApplicationSettings()
 
     ##############################################
 
@@ -319,8 +316,6 @@ class Application(QObject):
     def _set_context_properties(self) -> None:
         context = self._engine.rootContext()
         context.setContextProperty('application', self._qml_application)
-        # Fixme: -> QmlApplication ?
-        context.setContextProperty('application_settings', self._settings)
 
     ##############################################
 
@@ -362,8 +357,7 @@ class Application(QObject):
     ##############################################
 
     def _post_init(self) -> None:
-        # Fixme: ui refresh ???
-        self._logger.info('post Init...')
+        self._logger.info('Post Init...')
         pdf_path = Path(self._args.path)
         if pdf_path.exists():
             pdf_url = QUrl(f'file:{pdf_path}')

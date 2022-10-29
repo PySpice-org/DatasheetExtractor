@@ -32,6 +32,7 @@ from qtpy.QtCore import Property, Signal, Slot, QObject, QUrl
 from qtpy.QtQml import QmlElement, QmlUncreatable
 
 from .ApplicationMetadata import ApplicationMetadata
+from .ApplicationSettings import ApplicationSettings, Shortcut
 from .QmlPdf import QmlPdf
 from .QmlTabulaExtractor import QmlTabulaExtractor
 
@@ -65,6 +66,7 @@ class QmlApplication(QObject):
     def __init__(self, application: 'Application') -> None:
         super().__init__()
         self._application = application
+        self._settings = ApplicationSettings()
         self._pdf = None
         self._tabula_extractor = QmlTabulaExtractor()
 
@@ -79,6 +81,12 @@ class QmlApplication(QObject):
     def notify_error(self, message: str) -> None:
         backtrace_str = traceback.format_exc()
         self.show_error.emit(str(message), backtrace_str)
+
+    ##############################################
+
+    @Property(ApplicationSettings, constant=True)
+    def settings(self) -> ApplicationSettings:
+        return self._settings
 
     ##############################################
 
