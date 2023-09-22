@@ -1,1 +1,4 @@
 Package: DatasheetExtractor
+Qt:
+  bin_path: /opt/Qt/6.4.0/gcc_64/bin
+  source_path: /opt/Qt/qt6-git
