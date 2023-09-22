@@ -122,12 +122,21 @@ Page {
             width: parent.width - page_view.width - list_view.width
             height: parent.height
 
+            /*
             Plugins.Tabula {
                 anchors.fill: parent
                 application_window: root.application_window
                 page_number: root.page_number
                 selection_area: page_view.selection_area
             }
+
+            Plugins.Pinout {
+                anchors.fill: parent
+                application_window: root.application_window
+                page_number: root.page_number
+                selection_area: page_view.selection_area
+            }
+            */
         }
     }
 }

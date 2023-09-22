@@ -28,6 +28,9 @@ import DatasheetExtractor 1.0
 import Widgets 1.0 as Widgets
 import '.' 1.0 as Ui
 
+// Fixme:
+// Page support for a header and footer
+// Pane provides a background matching with the application style and theme
 Page {
     id: root
 
