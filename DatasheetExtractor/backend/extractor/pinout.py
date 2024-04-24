@@ -27,6 +27,8 @@ __all__ = ['Page']
 import logging
 import os
 
+from pprint import pprint
+
 ####################################################################################################
 
 from DatasheetExtractor.backend.pdf.page import PdfPage

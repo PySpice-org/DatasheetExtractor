@@ -146,7 +146,7 @@ class PdfDocument:
 
     def __len__(self) -> int:
         return self._doc.page_count
- 
+
     ##############################################
 
     @property
@@ -193,7 +193,7 @@ class PdfDocument:
     @property
     def first_page(self) -> PdfPage:
         return self._page(self.first_page_number)
-        
+
     ##############################################
 
     def __getitem__(self, slice_: int) -> PdfPage:

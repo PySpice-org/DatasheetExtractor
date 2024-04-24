@@ -166,7 +166,7 @@ if True: # H
 mamba.add(out_b1, out_b2, out_b)
 
 # maxima.show()
-    
+
 # tmp2.show()
 # out.show()
 # mask1.show()

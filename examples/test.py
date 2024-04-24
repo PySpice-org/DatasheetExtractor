@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 
 from DatasheetExtractor import PdfDocument, PdfPage
-from DatasheetExtractor.backend.extractor import PinoutExtractor
+from DatasheetExtractor.backend.extractor.pinout import PinoutExtractor
 
 ####################################################################################################
 
@@ -28,18 +28,17 @@ document = PdfDocument(url, cache_path='devices')
 ####################################################################################################
 
 page = document[18]
-array = page.pixmap()
+pixmap = page.pixmap()
 print(page.width, page.height)
-print(array.shape)
-1/0
+#! print(array.shape)
 
 ####################################################################################################
 
-# for page in range(14, 17 +1):
-#     extractor = PinoutExtractor(document[page])
-#     print()
-#     print(f'Page {page}')
-#     print(extractor.format_pinout(extractor.extract_pinout_quad()))
+for page in range(14, 17 +1):
+    extractor = PinoutExtractor(document[page])
+    print()
+    print(f'Page {page}')
+    print(extractor.format_pinout(extractor.extract_pinout_quad()))
 
 ####################################################################################################
 

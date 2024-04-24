@@ -24,9 +24,9 @@ __all__ = ['PdfPage']
 
 ####################################################################################################
 
-# from pathlib import Path
-# from pprint import pprint
-from typing import Iterator
+#from pathlib import Path
+from pprint import pprint
+from typing import Iterator, Optional
 
 from enum import Enum, auto
 import logging
@@ -51,16 +51,72 @@ class Direction(Enum):
 
 ####################################################################################################
 
+def round_color(color: list[float]) -> list[int]:
+    if color is not None:
+        return [round(_, 3) for _ in color]
+    else:
+        return color
+
+def float_to_hex_color(color: list[float]) -> str:
+    # '{:02X}'.format(int(_*255))
+    if color is not None:
+        return ''.join(['%02x' % round(_*255) for _ in color])
+    else:
+        return color
+
+####################################################################################################
+
+# See https://en.wikipedia.org/wiki/Point_(typography)
+# The desktop publishing (DTP) point is defined as 1/72 of an international inch.
+# 1 pt = 1/72 in = 25.4/72 mm ~ 0.353 mm ~ 1/3 mm
+
+def pt2in(x: float) -> float:
+    return x/72
+
+def in2pt(x: float) -> float:
+    return x*72
+
+def in2mm(x: float) -> float:
+    return x*25.4
+
+def mm2in(x: float) -> float:
+    return x/25.4
+
+def pt2mm(x: float) -> float:
+    return pt2in(in2mm(x))
+
+def mm2pt(x: float) -> float:
+    return mm2in(in2pt(x))
+
+def round_point(x: float, scale: float = 10) -> int:
+    # round(int, ndigits=1)
+    # f'{a:.1f}' -> 123.4
+    # f'{a:.0f}' -> 123
+    return round(x*scale)
+
+####################################################################################################
+
 class Line:
 
     ##############################################
 
-    def __init__(self, x: int, y: int, bbox: list[int], direction: Direction, size: float, text: str, location: str) -> None:
+    def __init__(
+            self,
+            x: int,
+            y: int,
+            bbox: list[int],
+            direction: Direction,
+            size: float,
+            color: int,
+            text: str,
+            location: str,
+    ) -> None:
         self.x = x
         self.y = y
         x_min, y_min, x_max, y_max = bbox
         self.bbox = IntervalInt2D((x_min, x_max), (y_min, y_max))
         self.size = size
+        self.color = color
         self.text = text
         self.direction = direction
         self.location = location
@@ -135,16 +191,54 @@ class Line:
 
 ####################################################################################################
 
+class Box:
+
+    ##############################################
+
+    def __init__(
+            self,
+            bbox: list[int],
+            color: list[int],
+            fill: list[int],
+    ) -> None:
+        self.color = float_to_hex_color(color)
+        self.fill = float_to_hex_color(fill)
+        x_min, y_min, x_max, y_max = bbox
+        # Fixme: rect, interval, bbox...
+        self.interval = IntervalInt2D((x_min, x_max), (y_min, y_max))
+
+    ##############################################
+
+    @property
+    def center(self):
+        return self.interval.center
+
+    ##############################################
+
+    @property
+    def bounding_box(self):
+        return self.interval.bounding_box
+
+####################################################################################################
+
 class PdfPage:
 
     # API: https://pymupdf.readthedocs.io/en/latest/page.html
     # Appendix 1: Details on Text Extraction https://pymupdf.readthedocs.io/en/latest/app1.html
+
+    # fitz PDF unit is point to convert to mm use x/72*25.4
 
     ###! to transform float X.12... to int X1
     UNIT_SCALE = 10
 
     ##############################################
 
+    @classmethod
+    def round(cls, x: float, scale: int = UNIT_SCALE) -> int:
+        return int(round(x / scale))
+
+    # Fixme: *10 -> /10 !!!
+    #   unit ???
     @classmethod
     def to_scaled(cls, x: float) -> int:
         return int(x * cls.UNIT_SCALE)
@@ -155,10 +249,17 @@ class PdfPage:
 
     ##############################################
 
-    def __init__(self, document: 'Document', fitz_page) -> None:
+    # Fixme: API fitz_page ?
+    def __init__(self, document: 'Document', fitz_page: fitz.Page) -> None:
         self._document = document
         self._fitz_page = fitz_page
-        self._data = fitz_page.get_text('dict')
+        pprint(fitz_page.mediabox)
+        # Fixme: lazy ?
+        self._text = fitz_page.get_text(
+            'dict',
+            clip=None,
+            sort=True,
+        )
 
         # page.get_links()
         # page.annots()
@@ -183,13 +284,39 @@ class PdfPage:
 
     ##############################################
 
+    # _fitz_page.bound()
+    #   Determine the rectangle of the page.
+    #   For PDF documents this usually also coincides with mediabox and cropbox, but not always.
+    #   For example, if the page is rotated, then this is reflected by this method
+
     @property
     def width(self):
-        return self.to_scaled(self._data['width'])
+        return self.to_scaled(self._text['width'])
 
     @property
     def height(self):
-        return self.to_scaled(self._data['height'])
+        return self.to_scaled(self._text['height'])
+
+    ##############################################
+
+    def percent_bbox(
+            self,
+            xbox: list[int],
+            ybox: list[int],
+            round_scale: int = 10,   # scale
+    ) -> IntervalInt2D:
+        # bbox: list[int]
+        # x_min, x_max, y_min, y_max = bbox
+        # x_min, x_max = xbox
+        # y_min, y_max = ybox
+        # x_min, x_max = [round(_*width) for _ in (x_min, x_max)]
+        # y_min, y_max = [round(_*height) for _ in (y_min, y_max)]
+        # return IntervalInt2D((x_min, x_max), (y_min, y_max))
+        width, height = [_/(100*round_scale) for _ in (self.width, self.height)]
+        return IntervalInt2D(
+            [round(_*width) for _ in xbox],
+            [round(_*height) for _ in ybox],
+        )
 
     ##############################################
 
@@ -241,21 +368,28 @@ class PdfPage:
         # lines are sorted by y block
         # then by x
         # right justified blocks on header are placed at the end
-        for b, block in enumerate(self._data['blocks']):
+        for b, block in enumerate(self._text['blocks']):
             if 'lines' in block:
                 for l, line in enumerate(block['lines']):
                     match line['dir']:
                         case (1.0, 0.0):
                             direction = Direction.horizontal
+                        # case (-1.0, 0.0):
+                        #     direction = Direction.horizontal
+                        case (0.0, 1.0):
+                            direction = Direction.vertical
                         case (0.0, -1.0):
                             direction = Direction.vertical
+                        case _:
+                            raise NotImplementedError('direction %s', str(line['dir']))
                     for s, span in enumerate(line['spans']):
                         # pprint(span)
                         x, y = [self.to_scaled(_) for _ in span['origin']]
                         bbox = [self.to_scaled(_) for _ in span['bbox']]
                         size = self.to_scaled(span['size'])
                         location = f'{b}/{l}/{s}'
-                        yield Line(x, y, bbox, direction, size, span['text'], location)
+                        color = span['color']
+                        yield Line(x, y, bbox, direction, size, color, span['text'], location)
 
     ##############################################
 
@@ -270,24 +404,31 @@ class PdfPage:
     def sort_xy(
             self,
             axe: str = 'x',
-            use_center1: bool = False,
-            use_center2: bool = False,
-            ensure_direction: bool = False,
-            round_scale: int = 10,
-    ) -> dict:
+            use_center1: bool = False,   # use centre for axe
+            use_center2: bool = False,   # use centre for second axe
+            ensure_direction: bool = False,   # if line direction matches axe
+            round_scale: int = 10,   # scale x
+            bounding_box: Optional[IntervalInt2D] = None,
+    ) -> list:
         # Create an axe map
         axe_map = {}
         for line in self.lines:
-            if ensure_direction:
-                if axe == 'y' and line.direction != Direction.horizontal:
+            if bounding_box is not None:
+                if not line.bounding_box.is_included_in(bounding_box):
                     continue
+            if isinstance(ensure_direction, bool):
                 if axe == 'x' and line.direction != Direction.vertical:
                     continue
+                if axe == 'y' and line.direction != Direction.horizontal:
+                    continue
+            elif ensure_direction is not None:
+                if line.direction != ensure_direction:
+                    continue
             if use_center1:
-                x = line.center_y if axe == 'y' else line.center_x
+                x = line.center_x if axe == 'x' else line.center_y
             else:
-                x = line.y if axe == 'y' else line.x
-            x = int(x / round_scale)
+                x = line.x if axe == 'x' else line.y
+            x = self.round(x, round_scale)   # cf. cls.to_scaled()
             axe_map.setdefault(x, [])
             axe_map[x].append(line)
         # sort on second axe
@@ -298,4 +439,24 @@ class PdfPage:
                 else:
                     return _.x if axe == 'y' else _.y
             line.sort(key=func)
-        return axe_map
+        # return axe_map
+        return [axe_map[i] for i in sorted(axe_map.keys())]
+
+    ##############################################
+
+    def color_boxes(
+            self,
+    ):
+        boxes = []
+        drawings = self._fitz_page.get_drawings(extended=False)
+        for d in drawings:
+            if d['closePath']:
+                # pprint(d)
+                bbox = [int(round(_)) for _ in d['rect']]
+                box = Box(
+                    bbox=bbox,
+                    color=d['color'],
+                    fill=d['fill'],
+                )
+                boxes.append(box)
+        return boxes
